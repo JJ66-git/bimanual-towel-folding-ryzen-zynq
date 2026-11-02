@@ -3,7 +3,7 @@
 ## Release scope
 
 - Hardware serials in `cobot_site.json` and associated test fixtures were replaced with placeholders; users must bind their own devices. The engineering configuration (including the 14-dimensional start target and limits) and FPGA source/build outputs remain in the package.
-- Trained checkpoints, raw training images, videos, field logs, credentials and local environments are not included. Existing aggregate results referencing unavailable logs cannot be independently recomputed from this clone.
+- Trained checkpoints, raw training images, field logs, credentials and local environments are not included. A sanitized, silent video of one user-selected demonstration and an animated preview are included; recording metadata was removed. Existing aggregate results referencing unavailable logs cannot be independently recomputed from this clone.
 - Project-authored source is offered under Apache-2.0. Vendored third-party materials retain their licenses, notices and attribution. Hardware, models and external dependencies may carry additional conditions.
 - The board/LCD photograph is a real photograph of a diagnostic screen; the GUI screenshot is simulated.
 
@@ -16,4 +16,4 @@
 
 ## 公开说明
 
-公开包将机械臂和相机序列号替换为占位符，保留完成工程所需的起点、限位配置和 FPGA 设计；不包含训练权重、原始影像、运行日志、密钥或本机环境。10 项离线测试通过，完整系统尚未在干净环境和真实硬件重新验证，比赛要求的完整证据仍需另行补充。
+公开包将机械臂和相机序列号替换为占位符，保留完成工程所需的起点、限位配置和 FPGA 设计；不包含训练权重、原始训练影像、运行日志、密钥或本机环境；另包含去除元数据和音轨的单次演示视频及动图。10 项离线测试通过，完整系统尚未在干净环境和真实硬件重新验证，比赛要求的完整证据仍需另行补充。

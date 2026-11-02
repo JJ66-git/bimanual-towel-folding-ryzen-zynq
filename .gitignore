@@ -16,4 +16,5 @@ logs/
 *.hdf5
 *.bag
 *.mp4
+!docs/assets/folding_demo.mp4
 *.zip
