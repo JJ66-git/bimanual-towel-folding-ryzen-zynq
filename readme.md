@@ -161,6 +161,8 @@ These directories correspond to the host, FPGA, metrics, skill and report areas 
 
 ## References and licensing
 
+A reference for dual-arm folding and policy blending is [Piper Dual-Arm SmolVLA Towel Folding](https://github.com/dk2472780158-ctrl/piper-dual-arm-smolvla-towel-folding). It presents a dual-Piper implementation that blends ACT base actions with SmolVLA using continuous authority. This repository documents our own model deployment, Ryzen AI NPU experiments and Zynq hardware diagnostics; checkpoints, experiment records and results must be evaluated separately.
+
 The project draws on [LeRobot](https://github.com/huggingface/lerobot), the [ACT paper](https://arxiv.org/abs/2304.13705), [SmolVLA documentation](https://huggingface.co/docs/lerobot/smolvla), and the [SmolVLM2 model card](https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct). Platform references include the [Piper SDK](https://github.com/agilexrobotics/piper_sdk), [AMD Ryzen AI](https://ryzenai.docs.amd.com/en/latest/), [ROCm](https://rocm.docs.amd.com/projects/radeon-ryzen/en/latest/), and [PYNQ](https://pynq.readthedocs.io/en/latest/).
 
 Project-authored source is released under [Apache-2.0](license). Third-party files retain their own licenses and [notices](amd_hybrid_deploy_20261031/third_party_notices.md); models, hardware dependencies and external downloads have their own terms. The [public release checks](docs/public_release_checks.md) describe the checks performed and remaining gaps.

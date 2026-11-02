@@ -161,6 +161,8 @@ bash npu_deploy/run_dashboard_readonly.sh --check-only
 
 ## 参考与许可
 
+双臂折叠和模型混合的参考项目：[Piper Dual-Arm SmolVLA Towel Folding](https://github.com/dk2472780158-ctrl/piper-dual-arm-smolvla-towel-folding)。该项目展示了双 Piper、ACT 基础动作与 SmolVLA 连续权限混合的实现和操作流程；本仓库在此类方案基础上记录自己的模型部署、Ryzen AI NPU 实验和 Zynq 硬件诊断。两边的训练权重、实验记录与结果应分别核对，不能直接混用。
+
 本项目参考并使用 [LeRobot](https://github.com/huggingface/lerobot)、[ACT 论文](https://arxiv.org/abs/2304.13705)、[SmolVLA 文档](https://huggingface.co/docs/lerobot/smolvla)和 [SmolVLM2 模型卡](https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct)。设备与软件参考 [Piper SDK](https://github.com/agilexrobotics/piper_sdk)、[AMD Ryzen AI](https://ryzenai.docs.amd.com/en/latest/)、[ROCm](https://rocm.docs.amd.com/projects/radeon-ryzen/en/latest/) 和 [PYNQ](https://pynq.readthedocs.io/en/latest/)。
 
 项目自有源码采用 [Apache-2.0](license)；第三方代码继续遵循各自许可证和 [NOTICE](amd_hybrid_deploy_20261031/third_party_notices.md)。模型、硬件依赖和外部下载各有适用条款。[公开版核验说明](docs/public_release_checks.md)记录了当前检查范围和尚未完成的工作。
