@@ -159,6 +159,10 @@ The supplied [dashboard image](docs/assets/dashboard_demo.png) is a simulated pr
 
 These directories correspond to the host, FPGA, metrics, skill and report areas in a conventional submission layout. Workflows are packaged, but migration to another machine or task without modification has not been demonstrated.
 
+## Project co-author
+
+[zacharyjiji](https://github.com/zacharyjiji)
+
 ## References and licensing
 
 A reference for dual-arm folding and policy blending is [Piper Dual-Arm SmolVLA Towel Folding](https://github.com/dk2472780158-ctrl/piper-dual-arm-smolvla-towel-folding). It presents a dual-Piper implementation that blends ACT base actions with SmolVLA using continuous authority. This repository documents our own model deployment, Ryzen AI NPU experiments and Zynq hardware diagnostics; checkpoints, experiment records and results must be evaluated separately.

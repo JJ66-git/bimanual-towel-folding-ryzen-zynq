@@ -159,6 +159,10 @@ bash npu_deploy/run_dashboard_readonly.sh --check-only
 
 这些目录分别对应常见项目结构中的 host、fpga、metrics、skill 与 report。运行与复现入口已封装，但尚未证明可以无修改迁移到另一台设备或另一项任务。
 
+## 项目共同作者
+
+[zacharyjiji](https://github.com/zacharyjiji)
+
 ## 参考与许可
 
 双臂折叠和模型混合的参考项目：[Piper Dual-Arm SmolVLA Towel Folding](https://github.com/dk2472780158-ctrl/piper-dual-arm-smolvla-towel-folding)。该项目展示了双 Piper、ACT 基础动作与 SmolVLA 连续权限混合的实现和操作流程；本仓库在此类方案基础上记录自己的模型部署、Ryzen AI NPU 实验和 Zynq 硬件诊断。两边的训练权重、实验记录与结果应分别核对，不能直接混用。
