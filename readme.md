@@ -14,9 +14,9 @@ The project connects **action generation, physical execution, and hardware obser
 
 A real robot trial on 2026-10-30, shown at approximately 2× speed. [Watch the full-length silent video](docs/assets/folding_demo.mp4). The team observed that this run substantially completed the fold; 667 control cycles were recorded, and a software limit stopped the subsequent return. This is one demonstration, not a success-rate measurement or evidence that the later FPGA/NPU integration was active in that run.
 
-![Project system overview](docs/assets/system_overview_zh.png)
+![Project system overview](docs/assets/system_overview_en.png)
 
-*Project report diagram with Chinese labels; robot illustrations are schematic. The FPGA receives diagnostic copies, while the AI PC software path issues the robot commands. An English flow diagram appears below.*
+*Project report diagram with English labels; robot illustrations are schematic. The FPGA receives diagnostic copies, while the AI PC software path issues the robot commands. An [editable SVG](docs/assets/system_overview_en.svg) is also available.*
 
 ## Why this problem
 
