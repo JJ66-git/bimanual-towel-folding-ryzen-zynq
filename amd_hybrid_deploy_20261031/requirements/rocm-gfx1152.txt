@@ -1,0 +1,4 @@
+# Ryzen AI 7 H 350 / Radeon 860M target; Python 3.12; AMD index required.
+rocm[libraries,device-gfx1152]==7.14.1
+torch[device-gfx1152]==2.11.0+rocm7.14.1
+torchvision[device-gfx1152]==0.26.0+rocm7.14.1

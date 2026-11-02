@@ -1,0 +1,23 @@
+{
+  "schema": "cobot_training_image_contract_v1",
+  "source_color_order": "RGB",
+  "policy_channel_permutation": [2, 1, 0],
+  "reason": "Original RGB uncompressed legacy observations were treated as BGR by conversion. Restore the existing policies' as-trained channel order at deployment; do not alter raw data, weights or statistics.",
+  "evidence": "evaluation/observation_contract_cpu_20261027/summary.json",
+  "policies": {
+    "act": {
+      "files": {
+        "model.safetensors": "845f8ba87a16dde7a9d0cf3daca13a899d187e7b6a5228ebd67a1c9d428b97d6",
+        "config.json": "a3872f648c7156c0c039033594db34e4099e62edad379b3d38019c7186dc55f0"
+      },
+      "image_keys": ["observation.images.left", "observation.images.middle", "observation.images.right"]
+    },
+    "smolvla": {
+      "files": {
+        "model.safetensors": "6e2ee82cb80090681aee42395cc96282d6e2b6d27e182b0f3c704c8d78b39afe",
+        "config.json": "c754679c97471d1cfc177e111f0c3e38c2694db18a8cd3bac9e41b61311d28d7"
+      },
+      "image_keys": ["observation.images.camera1", "observation.images.camera2", "observation.images.camera3"]
+    }
+  }
+}

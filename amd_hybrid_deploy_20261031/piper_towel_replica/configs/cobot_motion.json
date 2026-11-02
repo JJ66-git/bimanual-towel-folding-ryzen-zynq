@@ -1,0 +1,72 @@
+{
+  "schema": "cobot_reference_motion_v1",
+  "action_names": [
+    "left_joint_1.pos",
+    "left_joint_2.pos",
+    "left_joint_3.pos",
+    "left_joint_4.pos",
+    "left_joint_5.pos",
+    "left_joint_6.pos",
+    "left_gripper.pos",
+    "right_joint_1.pos",
+    "right_joint_2.pos",
+    "right_joint_3.pos",
+    "right_joint_4.pos",
+    "right_joint_5.pos",
+    "right_joint_6.pos",
+    "right_gripper.pos"
+  ],
+  "software_lower": [
+    -1.61,
+    -0.05,
+    -2.14,
+    -1.58,
+    -1.4,
+    -1.58,
+    0.0,
+    -1.61,
+    -0.05,
+    -2.14,
+    -1.58,
+    -1.4,
+    -1.58,
+    0.0
+  ],
+  "software_upper": [
+    1.61,
+    2.54,
+    0.06,
+    1.58,
+    1.4,
+    1.58,
+    0.08,
+    1.61,
+    2.54,
+    0.06,
+    1.58,
+    1.4,
+    1.58,
+    0.08
+  ],
+  "expansion_evidence": {
+    "sdk_query_reported_by_operator": true,
+    "j2_upper_deg": 180.0,
+    "j3_lower_deg": -170.0,
+    "dataset": "fold_blue_piper28_30hz",
+    "dataset_frames": 72000,
+    "dataset_j2_max_rad": [
+      2.4977715015411377,
+      2.5165586471557617
+    ],
+    "dataset_j3_min_rad": [
+      -2.054903268814087,
+      -2.112642765045166
+    ],
+    "margin_rad": 0.02,
+    "derivation": "Union of original reference box and dataset J2/J3 extremes plus reference 0.02rad projection margin, rounded outward to 0.01rad. Only J2 upper / J3 lower expand. SDK native limits remain enabled; this is not collision certification."
+  },
+  "act_inference": {
+    "mode": "saved_checkpoint",
+    "note": "Preserve ACT checkpoint config and native select_action queue. Selected ACT50k: chunk_size=100, n_action_steps=50, temporal_ensemble_coeff=null. No runtime temporal override or custom queue."
+  }
+}

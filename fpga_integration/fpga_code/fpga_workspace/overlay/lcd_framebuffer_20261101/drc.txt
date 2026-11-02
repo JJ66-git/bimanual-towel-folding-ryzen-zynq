@@ -1,0 +1,159 @@
+Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
+| Date         : Sun Nov  1 20:44:04 2026
+| Host         : JJ666 running 64-bit major release  (build 9200)
+| Command      : report_drc -file C:/robot/qiansai/FPGA_part/fpga_workspace/overlay/lcd_framebuffer_20261101/drc.txt
+| Design       : system_wrapper
+| Device       : xc7z020clg400-2
+| Speed File   : -2
+| Design State : Fully Routed
+---------------------------------------------------------------------------------------------------------------------
+
+Report DRC
+
+Table of Contents
+-----------------
+1. REPORT SUMMARY
+2. REPORT DETAILS
+
+1. REPORT SUMMARY
+-----------------
+            Netlist: netlist
+          Floorplan: impl_1
+      Design limits: <entire design considered>
+           Ruledeck: default
+             Max violations: <unlimited>
+             Violations found: 24
++--------+----------+--------------------------+------------+
+| Rule   | Severity | Description              | Violations |
++--------+----------+--------------------------+------------+
+| BUFC-1 | Warning  | Input Buffer Connections | 21         |
+| DPIP-1 | Warning  | Input pipelining         | 1          |
+| DPOP-1 | Warning  | PREG Output pipelining   | 1          |
+| DPOP-2 | Warning  | MREG Output pipelining   | 1          |
++--------+----------+--------------------------+------------+
+
+2. REPORT DETAILS
+-----------------
+BUFC-1#1 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_0/IBUF (in lcd_rgb_tri_iobuf_0 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#2 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_1/IBUF (in lcd_rgb_tri_iobuf_1 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#3 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_10/IBUF (in lcd_rgb_tri_iobuf_10 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#4 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_11/IBUF (in lcd_rgb_tri_iobuf_11 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#5 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_12/IBUF (in lcd_rgb_tri_iobuf_12 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#6 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_13/IBUF (in lcd_rgb_tri_iobuf_13 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#7 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_14/IBUF (in lcd_rgb_tri_iobuf_14 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#8 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_16/IBUF (in lcd_rgb_tri_iobuf_16 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#9 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_17/IBUF (in lcd_rgb_tri_iobuf_17 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#10 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_18/IBUF (in lcd_rgb_tri_iobuf_18 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#11 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_19/IBUF (in lcd_rgb_tri_iobuf_19 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#12 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_2/IBUF (in lcd_rgb_tri_iobuf_2 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#13 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_20/IBUF (in lcd_rgb_tri_iobuf_20 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#14 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_21/IBUF (in lcd_rgb_tri_iobuf_21 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#15 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_22/IBUF (in lcd_rgb_tri_iobuf_22 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#16 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_3/IBUF (in lcd_rgb_tri_iobuf_3 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#17 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_4/IBUF (in lcd_rgb_tri_iobuf_4 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#18 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_5/IBUF (in lcd_rgb_tri_iobuf_5 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#19 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_6/IBUF (in lcd_rgb_tri_iobuf_6 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#20 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_8/IBUF (in lcd_rgb_tri_iobuf_8 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+BUFC-1#21 Warning
+Input Buffer Connections  
+Input buffer lcd_rgb_tri_iobuf_9/IBUF (in lcd_rgb_tri_iobuf_9 macro) has no loads. It is recommended to have an input buffer drive an internal load.
+Related violations: <none>
+
+DPIP-1#1 Warning
+Input pipelining  
+DSP system_i/lcd/inst/scan_index2 input system_i/lcd/inst/scan_index2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPOP-1#1 Warning
+PREG Output pipelining  
+DSP system_i/lcd/inst/scan_index2 output system_i/lcd/inst/scan_index2/P[47:0] is not pipelined (PREG=0). Pipelining the DSP48 output will improve performance and often saves power so it is suggested whenever possible to fully pipeline this function.  If this DSP48 function was inferred, it is suggested to describe an additional register stage after this function.  If the DSP48 was instantiated in the design, it is suggested to set the PREG attribute to 1.
+Related violations: <none>
+
+DPOP-2#1 Warning
+MREG Output pipelining  
+DSP system_i/lcd/inst/scan_index2 multiplier stage system_i/lcd/inst/scan_index2/P[47:0] is not pipelined (MREG=0). Pipelining the multiplier function will improve performance and will save significant power so it is suggested whenever possible to fully pipeline this function.  If this multiplier was inferred, it is suggested to describe an additional register stage after this function.  If there is no registered adder/accumulator following the multiply function, two pipeline stages are suggested to allow both the MREG and PREG registers to be used.  If the DSP48 was instantiated in the design, it is suggested to set both the MREG and PREG attributes to 1 when performing multiply functions.
+Related violations: <none>
+
+

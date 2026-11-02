@@ -1,0 +1,39 @@
+{
+  "robot": {
+    "type": "piper_dual",
+    "left_port": "can_left",
+    "right_port": "can_right"
+  },
+  "usb_serials": {
+    "left": "REPLACE_USB_SERIALS_LEFT",
+    "right": "REPLACE_USB_SERIALS_RIGHT"
+  },
+  "camera_roles": {
+    "left": "REPLACE_CAMERA_ROLES_LEFT",
+    "middle": "REPLACE_CAMERA_ROLES_MIDDLE",
+    "right": "REPLACE_CAMERA_ROLES_RIGHT"
+  },
+  "control_fps": 30,
+  "max_actions": 750,
+  "handoff_step": 300,
+  "task": "Fold the towel with both Piper arms.",
+  "state_dim": 28,
+  "action_dim": 14,
+  "models": {
+    "act": "models/act050000",
+    "smolvla": "models/smol030000"
+  },
+  "training_start_pose": "deployment_assets/task_start.json",
+  "note": "Local adaptation of pinned reference; indices resolved from serial and RGB formats. Visually confirm previews.",
+  "camera_roles_previous": {
+    "left": "REPLACE_CAMERA_ROLES_PREVIOUS_LEFT",
+    "middle": "REPLACE_CAMERA_ROLES_PREVIOUS_MIDDLE",
+    "right": "REPLACE_CAMERA_ROLES_PREVIOUS_RIGHT"
+  },
+  "camera_role_confirmation": "operator supplied left/middle/right indices after visual preview",
+  "camera_indices": {
+    "left": 14,
+    "middle": 20,
+    "right": 8
+  }
+}

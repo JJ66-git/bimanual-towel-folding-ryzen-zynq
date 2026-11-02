@@ -1,0 +1,25 @@
+指标名称,类别,数值,单位,测量条件,测试次数 / 时长,证据文件
+任务闭环成功率,核心,待测,%,成功和人工干预判据尚未完成,待测,原始任务证据未随包
+端到端物理响应 P99,核心,待测,ms,相机采集至执行器实际响应；需时钟同步,待测,原始测量未随包
+AI 任务效果,核心,待测,,多场景独立标注,待测,原始任务证据未随包
+控制程序执行步数,控制,750,步,execute=True；以动作预算结束，不证明折叠成功,1 次，26.907 s,原机 trace 和 console；未随包
+相邻控制 tick P50,控制,33.398,ms,目标 30 Hz；主机单调时钟，最近一次运行,749 个间隔,原机 trace；未随包
+相邻控制 tick P95,控制,33.435,ms,目标 30 Hz；最近秩，最近一次运行,749 个间隔,原机 trace；未随包
+相邻控制 tick P99,控制,139.451,ms,目标 30 Hz；最近秩，最近一次运行,749 个间隔,原机 trace；未随包
+相邻控制 tick 最大值,控制,406.724,ms,主机 tick 间隔，不是端到端物理时延,749 个间隔,原机 trace；未随包
+ACT pipeline P95,AI,17.032,ms,最近秩；含该阶段软件路径，非纯模型时延,750 样本,原机 trace；未随包
+ACT pipeline P99,AI,138.285,ms,最近秩；含该阶段软件路径，非纯模型时延,750 样本,原机 trace；未随包
+FPGA 往返 P50,通信,4.644,ms,有线 UDP；含主机/网络/PS/AXI/PL,750 样本,原机 checks.jsonl；未随包
+FPGA 往返 P95,通信,5.313,ms,有线 UDP；最近秩,750 样本,原机 checks.jsonl；未随包
+FPGA 往返 P99,通信,7.175,ms,有线 UDP；最近秩,750 样本,原机 checks.jsonl；未随包
+FPGA 往返最大值,通信,25.537,ms,有线 UDP；任务样本,750 样本,原机 checks.jsonl；未随包
+FPGA 板端处理 P50,FPGA,2.128,ms,PS 调用范围包含 MMIO 与 PL，不是纯 RTL 时间,750 样本,原机 checks.jsonl；未随包
+FPGA 板端处理 P95,FPGA,2.286,ms,PS 调用范围；最近秩,750 样本,原机 checks.jsonl；未随包
+FPGA 板端处理 P99,FPGA,2.512,ms,PS 调用范围；最近秩,750 样本,原机 checks.jsonl；未随包
+FPGA 板端处理最大值,FPGA,5.011,ms,PS 调用范围,750 样本,原机 checks.jsonl；未随包
+FPGA 任务样本参考一致,FPGA,750/750,条,与整数软件参考匹配，非动作许可,750 样本,原机 summary.json；未随包
+FPGA 请求超时,通信,0/751,次,含 1 次探针和 750 次任务样本,1 轮,原机 summary.json；未随包
+FPGA LUT,资源,6357,个,LCD1 + guard 实现报告,1 次实现,fpga_integration/fpga_code/fpga_workspace/overlay/lcd_framebuffer_20261101/utilization.txt
+FPGA BRAM Tile,资源,96,个,LCD1 + guard 实现报告,1 次实现,fpga_integration/fpga_code/fpga_workspace/overlay/lcd_framebuffer_20261101/utilization.txt
+FPGA WNS,时序,4.616,ns,逻辑约束 50 MHz、像素约束 25 MHz,1 次实现,fpga_integration/fpga_code/fpga_workspace/overlay/lcd_framebuffer_20261101/timing_summary.txt
+系统功耗,功耗,待测,W,说明整机或分设备测量边界,待测,未采集
