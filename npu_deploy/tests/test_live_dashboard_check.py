@@ -1,6 +1,7 @@
 import contextlib
 import importlib.util
 import io
+import json
 from pathlib import Path
 import sys
 from threading import Event
@@ -47,7 +48,9 @@ class ReadOnlyDashboardCheck(unittest.TestCase):
             def update_observation(self,obs):calls.append('update');self.stopping.set()
             def close(self):calls.append('close')
         def serial(path):
-            return 'REPLACE_USB_SERIALS_LEFT' if 'can_left' in str(path) else 'REPLACE_USB_SERIALS_RIGHT'
+            site=json.loads((module.PROJECT/'configs/cobot_site.json').read_text())
+            side='left' if site['robot']['left_port'] in str(path) else 'right'
+            return site['usb_serials'][side]
         modules={
             'prepare_cobot':SimpleNamespace(usb_serial=serial),
             'lerobot.cameras.opencv':SimpleNamespace(OpenCVCameraConfig=lambda **kw:kw),

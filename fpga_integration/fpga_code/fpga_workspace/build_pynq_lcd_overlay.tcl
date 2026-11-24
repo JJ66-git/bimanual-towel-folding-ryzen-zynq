@@ -1,6 +1,15 @@
 set source_dir [file dirname [file normalize [info script]]]
-set build_dir [file join $::env(TEMP) fpga_lcd1_build_20261101_r2]
-set out_dir [file join $source_dir overlay lcd_framebuffer_20261101]
+exec python3 [file join $source_dir scripts generate_fold_config.py] --check
+if {[info exists ::env(FPGA_BUILD_TAG)]} {
+    set build_tag $::env(FPGA_BUILD_TAG)
+} else {
+    set build_tag fpg1_v3_b35_20261113_revision
+}
+if {![regexp {^[A-Za-z0-9_]+$} $build_tag]} {
+    error "FPGA_BUILD_TAG may contain only letters, numbers and underscores"
+}
+set build_dir [file join $source_dir validation_runs fpga_build_$build_tag]
+set out_dir [file join $source_dir overlay lcd_framebuffer_$build_tag]
 if {[file exists $build_dir] || [file exists $out_dir]} {
     error "Use fresh build/output directories; do not overwrite prior evidence"
 }
@@ -8,7 +17,7 @@ file mkdir $build_dir
 set repo [file join $build_dir ip_repo]
 
 foreach {name version files} {
-    axi_lite_guard 1.1 {axi_lite_guard.sv motion_guard.sv link_watchdog.sv guard_config.svh}
+    axi_lite_guard 1.3 {axi_lite_guard.sv motion_guard.sv link_watchdog.sv fold_stage.sv fold_vision.sv guard_config.svh fold_verify_params.svh}
     axi_lcd 1.0 {axi_lcd.sv}
 } {
     create_project package_$name [file join $build_dir package_$name] -part xc7z020clg400-2
@@ -48,7 +57,7 @@ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 ps7
 set_property -dict [list CONFIG.PCW_CRYSTAL_PERIPHERAL_FREQMHZ {33.333333} \
     CONFIG.PCW_USE_M_AXI_GP0 {1} CONFIG.PCW_EN_CLK0_PORT {1} \
     CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {50}] [get_bd_cells ps7]
-create_bd_cell -type ip -vlnv user.org:user:axi_lite_guard:1.1 guard
+create_bd_cell -type ip -vlnv user.org:user:axi_lite_guard:1.3 guard
 create_bd_cell -type ip -vlnv user.org:user:axi_lcd:1.0 lcd
 create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 reset_0
 create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_bus
@@ -96,11 +105,20 @@ open_run impl_1
 report_utilization -file [file join $out_dir utilization.txt]
 report_timing_summary -file [file join $out_dir timing_summary.txt]
 report_drc -file [file join $out_dir drc.txt]
+set errors [get_drc_violations -quiet -filter {SEVERITY == Error}]
+if {[llength $errors] != 0} {error "Routed DRC errors: $errors"}
+set setup [get_property SLACK [get_timing_paths -delay_type max -max_paths 1]]
+set hold [get_property SLACK [get_timing_paths -delay_type min -max_paths 1]]
+if {$setup eq "" || $hold eq "" || $setup < 0 || $hold < 0} {
+    error "Routed setup/hold not acceptable: $setup / $hold"
+}
 file copy [file join $build_dir project lcd1_guard.runs impl_1 system_wrapper.bit] \
-    [file join $out_dir lcd1_guard.bit]
+    [file join $out_dir ${build_tag}.bit]
 set hwh [glob [file join $build_dir project lcd1_guard.srcs sources_1 bd system hw_handoff *.hwh]]
 if {[llength $hwh] != 1} {error "Expected one HWH"}
-file copy [lindex $hwh 0] [file join $out_dir lcd1_guard.hwh]
+file copy [lindex $hwh 0] [file join $out_dir ${build_tag}.hwh]
 source [file join $source_dir scripts adapt_pynq_hwh_clock.tcl]
-adapt_pynq_hwh_clock [file join $out_dir lcd1_guard.hwh]
-puts "PASS: LCD1 + B32 built; physical LCD acceptance remains pending"
+adapt_pynq_hwh_clock [file join $out_dir ${build_tag}.hwh]
+puts "PASS: LCD1 + FPG1 v3 B35 built: [file join $out_dir ${build_tag}.bit]"
+puts "PYNQ HWH: [file join $out_dir ${build_tag}.hwh]"
+puts "Physical LCD and board acceptance remain pending"

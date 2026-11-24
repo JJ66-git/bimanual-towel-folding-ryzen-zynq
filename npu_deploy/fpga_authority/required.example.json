@@ -1,0 +1,11 @@
+{
+  "schema": "fpga_action_authority_v1",
+  "expected_build_id": 1179666229,
+  "guard_profile_sha256": "785feda54e9906a9f29a453ec958001eebb52fd2176bdc0599d5d08fc095d364",
+  "reply_budget_us": 20000,
+  "feedback_limit_us": 100000,
+  "budget_scope": "fresh_feedback_to_dispatch",
+  "qualification_report": null,
+  "note": "Provisional dispatch-window budget. Real robot execution remains blocked until current-board fault and timing acceptance under full controller load is recorded.",
+  "address": "192.168.2.99:9009"
+}

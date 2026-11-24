@@ -18,6 +18,15 @@ def usb_serial(device):
     return None
 
 
+def can_inventory(net_root=Path('/sys/class/net')):
+    """Read USB identities without opening a CAN socket or changing links."""
+    result=[]
+    for path in sorted(net_root.glob('can*')):
+        device=(path/'device').resolve()
+        result.append(dict(interface=path.name,serial=usb_serial(device),device=str(device)))
+    return result
+
+
 def rgb_formats(text):
     return bool(re.search(r"'(MJPG|YUYV|UYVY|RGB3|BGR3)'", text)) and '640x480' in text
 
@@ -77,15 +86,22 @@ def save_previews(cameras):
 def discover(site, indices=None):
     from camera_inventory import scan_cameras, match_roles
     ports = {}
-    for path in sorted(Path('/sys/class/net').glob('can*')):
-        serial = usb_serial((path/'device').resolve())
+    inventory_can=can_inventory()
+    for row in inventory_can:
+        serial = row['serial']
         for side, expected in site['usb_serials'].items():
-            if serial == expected:
+            if serial and serial == expected:
                 if side in ports:
                     raise ValueError('Duplicate CAN identity: '+side)
-                ports[side] = path.name
+                ports[side] = row['interface']
     if set(ports) != {'left', 'right'}:
-        raise ValueError('Expected both arm USB adapters; found '+str(ports))
+        unbound=any(not serial or str(serial).startswith('REPLACE_') for serial in site['usb_serials'].values())
+        hint=('Saved arm USB identities are still placeholders; physically confirm left/right and bind first.'
+              if unbound else 'Check the saved left/right USB identities against detected adapters.')
+        raise ValueError('Expected both arm USB adapters; matched='+json.dumps(ports)+
+                         '; expected='+json.dumps(site['usb_serials'])+
+                         '; detected='+json.dumps(inventory_can)+'; '+hint+
+                         ' Never assign arm roles from can0/can1 numbering alone.')
     inventory = scan_cameras()
     dest = ROOT/'logs'
     dest.mkdir(parents=True, exist_ok=True)

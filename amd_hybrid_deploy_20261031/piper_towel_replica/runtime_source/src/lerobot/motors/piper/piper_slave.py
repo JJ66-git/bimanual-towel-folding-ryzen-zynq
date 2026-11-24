@@ -1,5 +1,6 @@
 import os
 import time
+from contextlib import nullcontext
 from dataclasses import dataclass
 
 from piper_sdk import C_PiperInterface_V2
@@ -17,7 +18,11 @@ class PiperMotorsBus:
     def __init__(self, config: PiperMotorsBusConfig):
         # Enable Piper SDK 0.6.2 as the final hardware-limit layer for
         # follower feedback and control commands.
-        self.piper = C_PiperInterface_V2(
+        interface = C_PiperInterface_V2
+        if os.environ.get('AIPC_FPGA_FOLD'):
+            from .feedback_snapshot import PiperFeedbackInterface
+            interface = PiperFeedbackInterface
+        self.piper = interface(
             config.can_name,
             start_sdk_joint_limit=True,
             start_sdk_gripper_limit=True,
@@ -36,6 +41,7 @@ class PiperMotorsBus:
         if not 0.0 < self.action_filter_alpha <= 1.0:
             raise ValueError("PIPER_ACTION_FILTER_ALPHA must be in the range (0, 1]")
         self._filtered_joint_target: list[float] | None = None
+        self.last_feedback_timestamps = None
         if self.action_filter_alpha < 1.0:
             print(
                 f"Piper joint filter enabled on {config.can_name}: "
@@ -150,12 +156,23 @@ class PiperMotorsBus:
         self.piper.GripperCtrl(abs(gripper_range), 1000, 0x01, 0)
 
     def read(self) -> dict:
+        lock = getattr(self.piper, 'feedback_snapshot_lock', None)
+        with lock if lock is not None else nullcontext():
+            return self._read_snapshot()
+
+    def _read_snapshot(self) -> dict:
         """Read joint/gripper positions and efforts."""
         joint_msg = self.piper.GetArmJointMsgs()
+        joint_timestamp = float(joint_msg.time_stamp)
         joint_state = joint_msg.joint_state
         gripper_msg = self.piper.GetArmGripperMsgs()
+        gripper_timestamp = float(gripper_msg.time_stamp)
         gripper_state = gripper_msg.gripper_state
         high_spd_msg = self.piper.GetArmHighSpdInfoMsgs()
+        self.last_feedback_timestamps = dict(joint=joint_timestamp,
+                                             gripper=gripper_timestamp)
+        if hasattr(self.piper, 'feedback_monotonic_snapshot'):
+            self.last_feedback_timestamps.update(self.piper.feedback_monotonic_snapshot())
 
         return {
             "joint_1_pos": joint_state.joint_1 / self.joint_factor,

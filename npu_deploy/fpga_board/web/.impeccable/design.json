@@ -1,0 +1,513 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-13T14:41:07.168640Z",
+  "title": "Design System: FlexiFold Cooperative Monitor",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "tonalRamp": [
+          "oklch(15.0% 0.0041 91.55)",
+          "oklch(26.0% 0.0091 91.55)",
+          "oklch(37.0% 0.0132 91.55)",
+          "oklch(49.0% 0.0165 91.55)",
+          "oklch(61.0% 0.0165 91.55)",
+          "oklch(73.0% 0.0140 91.55)",
+          "oklch(85.0% 0.0091 91.55)",
+          "oklch(95.0% 0.0033 91.55)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Charcoal",
+        "tonalRamp": [
+          "oklch(15.0% 0.0022 137.83)",
+          "oklch(26.0% 0.0049 137.83)",
+          "oklch(37.0% 0.0071 137.83)",
+          "oklch(49.0% 0.0089 137.83)",
+          "oklch(61.0% 0.0089 137.83)",
+          "oklch(73.0% 0.0075 137.83)",
+          "oklch(85.0% 0.0049 137.83)",
+          "oklch(95.0% 0.0018 137.83)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Vermilion",
+        "tonalRamp": [
+          "oklch(15.0% 0.0497 33.31)",
+          "oklch(26.0% 0.1093 33.31)",
+          "oklch(37.0% 0.1590 33.31)",
+          "oklch(49.0% 0.1988 33.31)",
+          "oklch(61.0% 0.1988 33.31)",
+          "oklch(73.0% 0.1690 33.31)",
+          "oklch(85.0% 0.1093 33.31)",
+          "oklch(95.0% 0.0398 33.31)"
+        ]
+      },
+      "acid": {
+        "role": "secondary",
+        "displayName": "Acid Green",
+        "tonalRamp": [
+          "oklch(15.0% 0.0375 119.81)",
+          "oklch(26.0% 0.0824 119.81)",
+          "oklch(37.0% 0.1199 119.81)",
+          "oklch(49.0% 0.1498 119.81)",
+          "oklch(61.0% 0.1498 119.81)",
+          "oklch(73.0% 0.1274 119.81)",
+          "oklch(85.0% 0.0824 119.81)",
+          "oklch(95.0% 0.0300 119.81)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "tonalRamp": [
+          "oklch(15.0% 0.0046 107.03)",
+          "oklch(26.0% 0.0101 107.03)",
+          "oklch(37.0% 0.0147 107.03)",
+          "oklch(49.0% 0.0184 107.03)",
+          "oklch(61.0% 0.0184 107.03)",
+          "oklch(73.0% 0.0156 107.03)",
+          "oklch(85.0% 0.0101 107.03)",
+          "oklch(95.0% 0.0037 107.03)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Divider",
+        "tonalRamp": [
+          "oklch(15.0% 0.0060 90.77)",
+          "oklch(26.0% 0.0132 90.77)",
+          "oklch(37.0% 0.0191 90.77)",
+          "oklch(49.0% 0.0239 90.77)",
+          "oklch(61.0% 0.0239 90.77)",
+          "oklch(73.0% 0.0203 90.77)",
+          "oklch(85.0% 0.0132 90.77)",
+          "oklch(95.0% 0.0048 90.77)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Warm White",
+        "tonalRamp": [
+          "oklch(15.0% 0.0036 84.58)",
+          "oklch(26.0% 0.0078 84.58)",
+          "oklch(37.0% 0.0114 84.58)",
+          "oklch(49.0% 0.0142 84.58)",
+          "oklch(61.0% 0.0142 84.58)",
+          "oklch(73.0% 0.0121 84.58)",
+          "oklch(85.0% 0.0078 84.58)",
+          "oklch(95.0% 0.0028 84.58)"
+        ]
+      },
+      "olive": {
+        "role": "secondary",
+        "displayName": "Connection Olive",
+        "tonalRamp": [
+          "oklch(15.0% 0.0229 127.34)",
+          "oklch(26.0% 0.0504 127.34)",
+          "oklch(37.0% 0.0734 127.34)",
+          "oklch(49.0% 0.0917 127.34)",
+          "oklch(61.0% 0.0917 127.34)",
+          "oklch(73.0% 0.0779 127.34)",
+          "oklch(85.0% 0.0504 127.34)",
+          "oklch(95.0% 0.0183 127.34)"
+        ]
+      },
+      "sand": {
+        "role": "neutral",
+        "displayName": "Evidence Sand",
+        "tonalRamp": [
+          "oklch(15.0% 0.0144 95.37)",
+          "oklch(26.0% 0.0317 95.37)",
+          "oklch(37.0% 0.0461 95.37)",
+          "oklch(49.0% 0.0576 95.37)",
+          "oklch(61.0% 0.0576 95.37)",
+          "oklch(73.0% 0.0490 95.37)",
+          "oklch(85.0% 0.0317 95.37)",
+          "oklch(95.0% 0.0115 95.37)"
+        ]
+      },
+      "red": {
+        "role": "secondary",
+        "displayName": "Warning Red",
+        "tonalRamp": [
+          "oklch(15.0% 0.0435 30.02)",
+          "oklch(26.0% 0.0956 30.02)",
+          "oklch(37.0% 0.1391 30.02)",
+          "oklch(49.0% 0.1739 30.02)",
+          "oklch(61.0% 0.1739 30.02)",
+          "oklch(73.0% 0.1478 30.02)",
+          "oklch(85.0% 0.0956 30.02)",
+          "oklch(95.0% 0.0348 30.02)"
+        ]
+      },
+      "sand-text": {
+        "role": "neutral",
+        "displayName": "Sand Support Ink",
+        "tonalRamp": [
+          "oklch(15.0% 0.0093 99.77)",
+          "oklch(26.0% 0.0206 99.77)",
+          "oklch(37.0% 0.0299 99.77)",
+          "oklch(49.0% 0.0374 99.77)",
+          "oklch(61.0% 0.0374 99.77)",
+          "oklch(73.0% 0.0318 99.77)",
+          "oklch(85.0% 0.0206 99.77)",
+          "oklch(95.0% 0.0075 99.77)"
+        ]
+      },
+      "lcd-line": {
+        "role": "neutral",
+        "displayName": "LCD Divider",
+        "tonalRamp": [
+          "oklch(15.0% 0.0059 90.77)",
+          "oklch(26.0% 0.0131 90.77)",
+          "oklch(37.0% 0.0190 90.77)",
+          "oklch(49.0% 0.0238 90.77)",
+          "oklch(61.0% 0.0238 90.77)",
+          "oklch(73.0% 0.0202 90.77)",
+          "oklch(85.0% 0.0131 90.77)",
+          "oklch(95.0% 0.0048 90.77)"
+        ]
+      },
+      "lcd-muted": {
+        "role": "neutral",
+        "displayName": "LCD Muted Ink",
+        "tonalRamp": [
+          "oklch(15.0% 0.0047 110.98)",
+          "oklch(26.0% 0.0103 110.98)",
+          "oklch(37.0% 0.0150 110.98)",
+          "oklch(49.0% 0.0188 110.98)",
+          "oklch(61.0% 0.0188 110.98)",
+          "oklch(73.0% 0.0160 110.98)",
+          "oklch(85.0% 0.0103 110.98)",
+          "oklch(95.0% 0.0038 110.98)"
+        ]
+      },
+      "lcd-white": {
+        "role": "neutral",
+        "displayName": "LCD Warm White",
+        "tonalRamp": [
+          "oklch(15.0% 0.0042 88.00)",
+          "oklch(26.0% 0.0092 88.00)",
+          "oklch(37.0% 0.0133 88.00)",
+          "oklch(49.0% 0.0167 88.00)",
+          "oklch(61.0% 0.0167 88.00)",
+          "oklch(73.0% 0.0142 88.00)",
+          "oklch(85.0% 0.0092 88.00)",
+          "oklch(95.0% 0.0033 88.00)"
+        ]
+      },
+      "lcd-dark": {
+        "role": "neutral",
+        "displayName": "LCD Unlit Cell",
+        "tonalRamp": [
+          "oklch(15.0% 0.0037 128.94)",
+          "oklch(26.0% 0.0081 128.94)",
+          "oklch(37.0% 0.0117 128.94)",
+          "oklch(49.0% 0.0146 128.94)",
+          "oklch(61.0% 0.0146 128.94)",
+          "oklch(73.0% 0.0125 128.94)",
+          "oklch(85.0% 0.0081 128.94)",
+          "oklch(95.0% 0.0029 128.94)"
+        ]
+      },
+      "lcd-green": {
+        "role": "neutral",
+        "displayName": "LCD Package Pins",
+        "tonalRamp": [
+          "oklch(15.0% 0.0138 119.46)",
+          "oklch(26.0% 0.0304 119.46)",
+          "oklch(37.0% 0.0442 119.46)",
+          "oklch(49.0% 0.0552 119.46)",
+          "oklch(61.0% 0.0552 119.46)",
+          "oklch(73.0% 0.0470 119.46)",
+          "oklch(85.0% 0.0304 119.46)",
+          "oklch(95.0% 0.0110 119.46)"
+        ]
+      },
+      "lcd-red": {
+        "role": "secondary",
+        "displayName": "LCD Warning Red",
+        "tonalRamp": [
+          "oklch(15.0% 0.0439 30.92)",
+          "oklch(26.0% 0.0966 30.92)",
+          "oklch(37.0% 0.1405 30.92)",
+          "oklch(49.0% 0.1757 30.92)",
+          "oklch(61.0% 0.1757 30.92)",
+          "oklch(73.0% 0.1493 30.92)",
+          "oklch(85.0% 0.0966 30.92)",
+          "oklch(95.0% 0.0351 30.92)"
+        ]
+      },
+      "lcd-shade": {
+        "role": "neutral",
+        "displayName": "LCD Historical Shade",
+        "tonalRamp": [
+          "oklch(15.0% 0.0064 89.23)",
+          "oklch(26.0% 0.0142 89.23)",
+          "oklch(37.0% 0.0206 89.23)",
+          "oklch(49.0% 0.0258 89.23)",
+          "oklch(61.0% 0.0258 89.23)",
+          "oklch(73.0% 0.0219 89.23)",
+          "oklch(85.0% 0.0142 89.23)",
+          "oklch(95.0% 0.0052 89.23)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Implemented browser display role."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Implemented browser headline role."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Implemented browser body role."
+      },
+      "body-support": {
+        "displayName": "Body Support",
+        "purpose": "Implemented browser body support role."
+      },
+      "verdict": {
+        "displayName": "Verdict",
+        "purpose": "Implemented browser verdict role."
+      },
+      "section": {
+        "displayName": "Section",
+        "purpose": "Implemented browser section role."
+      },
+      "metric": {
+        "displayName": "Metric",
+        "purpose": "Implemented browser metric role."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Implemented browser label role."
+      },
+      "lcd-display": {
+        "displayName": "Lcd Display",
+        "purpose": "Pillow raster font asset; exact line-height is not applicable."
+      },
+      "lcd-node-title": {
+        "displayName": "Lcd Node Title",
+        "purpose": "Pillow raster font asset; exact line-height is not applicable."
+      },
+      "lcd-node-role": {
+        "displayName": "Lcd Node Role",
+        "purpose": "Pillow raster font asset; exact line-height is not applicable."
+      },
+      "lcd-verdict": {
+        "displayName": "Lcd Verdict",
+        "purpose": "Pillow raster font asset; exact line-height is not applicable."
+      },
+      "lcd-age": {
+        "displayName": "Lcd Age",
+        "purpose": "34px Pillow value for recorded feedback age when the computer sent the action; label 发出时距更新. It does not count elapsed time until now."
+      },
+      "lcd-label": {
+        "displayName": "Lcd Label",
+        "purpose": "Pillow raster font asset; exact line-height is not applicable."
+      },
+      "lcd-phase-index": {
+        "displayName": "Lcd Phase Index",
+        "purpose": "18px Pillow phase/evidence digits; center cropped alpha-mask ink bounds, not a fixed baseline."
+      },
+      "lcd-footer": {
+        "displayName": "Lcd Footer",
+        "purpose": "Pillow raster font asset; exact line-height is not applicable."
+      }
+    },
+    "shadows": [
+      {
+        "name": "chip",
+        "value": "0 12px 25px #252a1b1a",
+        "purpose": "Soft package depth, subject to clip-path clipping."
+      },
+      {
+        "name": "lcd-device",
+        "value": "0 18px 40px #1b201324",
+        "purpose": "Browser device preview frame only."
+      },
+      {
+        "name": "toast",
+        "value": "0 8px 25px #0002",
+        "purpose": "Transient read-only action feedback."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control",
+        "value": "130ms ease-out",
+        "purpose": "Control transform/background and logic-cell color."
+      },
+      {
+        "name": "state-update",
+        "value": "150ms ease-out",
+        "purpose": "Packet-positioned wire, task progress and evidence indicators."
+      },
+      {
+        "name": "wire-opacity",
+        "value": "120ms ease-out",
+        "purpose": "Fresh-data visibility; no free-running pulse."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "none",
+        "purpose": "Transitions and animations disabled under prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-min",
+        "value": "1600px"
+      },
+      {
+        "name": "compact-max",
+        "value": "1200px"
+      },
+      {
+        "name": "stack-max",
+        "value": "950px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Utility Button",
+      "kind": "button",
+      "refersTo": "button-utility",
+      "description": "Read-only inspection or export action; freeze also has an explicit pressed state.",
+      "html": "<button class=\"ds-utility\" type=\"button\" aria-pressed=\"false\">冻结查看</button>",
+      "css": ".ds-utility{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;font-size:13px;min-height:42px;padding:8px 13px;border:0;border-radius:6px;background:none;color:var(--ink,#191c18);cursor:pointer;transition:background-color 130ms ease-out,transform 130ms ease-out}.ds-utility:hover{background:#e5dfcf}.ds-utility:active{transform:scale(.96)}.ds-utility[aria-pressed=true]{background:var(--acid,#c2dc63)}.ds-utility:disabled{cursor:wait;opacity:.5}.ds-utility:focus-visible,.ds-dark:focus-visible,.ds-tab:focus-visible{outline:2px solid var(--accent,#e94c2c);outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-utility,.ds-dark,.ds-tab,.ds-grid i,.ds-evidence-steps span{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Dark Action Button",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "Copy diagnostics or enlarge the actual LCD mirror.",
+      "html": "<button class=\"ds-dark\" type=\"button\">复制诊断</button>",
+      "css": ".ds-dark{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;font-size:15px;min-height:42px;padding:8px 13px;border:0;border-radius:6px;background:var(--ink,#191c18);color:var(--paper,#f2eee2);cursor:pointer;transition:transform 130ms ease-out}.ds-dark:active{transform:scale(.96)}.ds-utility:focus-visible,.ds-dark:focus-visible,.ds-tab:focus-visible{outline:2px solid var(--accent,#e94c2c);outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-utility,.ds-dark,.ds-tab,.ds-grid i,.ds-evidence-steps span{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Observation Tabs",
+      "kind": "nav",
+      "refersTo": "nav-selected",
+      "description": "Selected tabs preserve charcoal/paper contrast through hover; application code supplies keyboard navigation.",
+      "html": "<nav class=\"ds-tabs\" role=\"tablist\" aria-label=\"查看内容\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">任务总览</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\" tabindex=\"-1\">数据与证据</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\" tabindex=\"-1\">板端屏幕</button></nav>",
+      "css": ".ds-tabs{display:flex;gap:4px}.ds-tab{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;font-size:14px;min-height:42px;padding:10px 17px;border:0;border-radius:3px;background:none;color:var(--ink,#191c18);cursor:pointer;transition:transform 130ms ease-out}.ds-tab:hover{background:#e5dfcf}.ds-tab[aria-selected=true],.ds-tab[aria-selected=true]:hover{background:var(--ink,#191c18);color:var(--paper,#f2eee2)}.ds-tab:active{transform:scale(.96)}.ds-utility:focus-visible,.ds-dark:focus-visible,.ds-tab:focus-visible{outline:2px solid var(--accent,#e94c2c);outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-utility,.ds-dark,.ds-tab,.ds-grid i,.ds-evidence-steps span{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Source Tags",
+      "kind": "chip",
+      "refersTo": "source-synthetic",
+      "description": "Source identity is stated in text; synthetic input receives dark-on-vermilion contrast.",
+      "html": "<div class=\"ds-sources\"><span class=\"ds-source\">主机观测</span><span class=\"ds-source ds-synthetic\">合成测试</span></div>",
+      "css": ".ds-sources{display:flex;gap:12px}.ds-source{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;font-size:12px;padding:5px 9px;border-radius:2px;background:var(--ink,#191c18);color:var(--paper,#f2eee2)}.ds-source.ds-synthetic{background:var(--accent,#e94c2c);color:var(--ink,#191c18)}@media(prefers-reduced-motion:reduce){.ds-utility,.ds-dark,.ds-tab,.ds-grid i,.ds-evidence-steps span{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Observed Phase Track",
+      "kind": "custom",
+      "description": "Current-phase example requires sample age ≤200ms, PL phase-valid reply bit and known recorded feedback_age_us ≤100000. Otherwise label the retained phase 上次 and apply the historical fill, even if transaction cooperation is active.",
+      "html": "<div class=\"ds-phase-wrap\"><strong class=\"ds-current-label\">当前：夹持 · PL识别</strong><div class=\"ds-phase-track\"><div class=\"ds-stage ds-reached\"><b>1</b><strong>张爪</strong></div><div class=\"ds-stage ds-current\"><b>2</b><strong>夹持</strong></div><div class=\"ds-stage\"><b>3</b><strong>翻折</strong></div></div></div>",
+      "css": ".ds-phase-wrap{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;color:var(--ink,#191c18)}.ds-current-label{font-size:13px}.ds-phase-track{display:flex;gap:22px;padding:10px 0 26px}.ds-stage{display:flex;align-items:center;gap:12px}.ds-stage>b{display:grid;place-items:center;height:44px;width:44px;border:1px solid var(--line,#d8d2c1);border-radius:50%;color:var(--muted,#69695d);font-size:16px;font-weight:400}.ds-stage>strong{font-size:18px;font-weight:400}.ds-stage.ds-reached>b{background:var(--ink,#191c18);border-color:var(--ink,#191c18);color:var(--acid,#c2dc63)}.ds-stage.ds-current>b{background:var(--accent,#e94c2c);border-color:var(--accent,#e94c2c);color:var(--ink,#191c18)}.ds-current>strong{font-weight:700}.ds-phase-track.ds-historical .ds-current>b{background:var(--line,#d8d2c1);border-color:var(--line,#d8d2c1)}@media(prefers-reduced-motion:reduce){.ds-utility,.ds-dark,.ds-tab,.ds-grid i,.ds-evidence-steps span{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Visual Evidence Card",
+      "kind": "card",
+      "refersTo": "evidence-card",
+      "description": "Sand evidence grouping retains the plain-language result, stable-frame count and check-round/frame provenance. This snippet shows the explicit waiting state.",
+      "html": "<article class=\"ds-evidence\"><h2>折叠证据是否足够？</h2><div class=\"ds-evidence-steps\"><span>1</span><span>2</span><span>3</span><i>稳定帧</i></div><h3>等待双臂退开</h3><p>双臂退到观察位置后，检查新的毛巾画面。</p><div class=\"ds-evidence-foot\"><span>检查轮次 -- / 画面 --</span><span>标定状态未知</span></div></article>",
+      "css": ".ds-evidence{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;max-width:420px;background:var(--sand,#e9deb3);color:var(--ink,#191c18);padding:23px 25px 14px;border-radius:12px}.ds-evidence h2{margin:0;font-size:15px;font-weight:400;color:#57533b}.ds-evidence h3{font-size:24px;margin:13px 0 11px}.ds-evidence p{font-size:12px;line-height:1.8;min-height:42px;margin:0;color:#57533b}.ds-evidence-steps{display:flex;gap:8px;align-items:center;margin-top:20px;height:40px}.ds-evidence-steps span{display:grid;place-items:center;width:29px;height:29px;border-radius:3px;background:#d3c89a;color:#57533b;font-size:13px;transition:background-color 150ms ease-out}.ds-evidence-steps span.ds-reached{background:var(--ink,#191c18);color:var(--acid,#c2dc63)}.ds-evidence-steps i{font-size:11px;font-style:normal;color:#57533b;margin-left:4px}.ds-evidence-foot{display:flex;justify-content:space-between;gap:8px;padding-top:16px;margin-top:16px;border-top:1px solid #b7b19b;font-size:10px;line-height:1.6;color:#57533b}@media(prefers-reduced-motion:reduce){.ds-utility,.ds-dark,.ds-tab,.ds-grid i,.ds-evidence-steps span{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "FPGA Package",
+      "kind": "custom",
+      "description": "Waiting package with pins scoped to the isolated chip wrapper and dynamic FPGA proof text outside it. Active cells require phase_current; real transaction flow is a separate indication.",
+      "html": "<div class=\"ds-pl-node\"><div class=\"ds-chip-package\"><div class=\"ds-chip-pins\" aria-hidden=\"true\"></div><div class=\"ds-chip\"><div class=\"ds-chip-top\">ZYNQ-7020 <span>B35</span></div><b>FPGA</b><div class=\"ds-grid\"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class=\"ds-chip-bottom\"><span>配置待核验</span><strong>50 MHz</strong></div></div></div><p class=\"ds-pl-role\">等待电脑发来动作数据</p></div>",
+      "css": ".ds-pl-node{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;text-align:center;max-width:296px;position:relative;z-index:1}.ds-chip-package{position:relative;isolation:isolate}.ds-chip-pins{position:absolute;inset:12px -9px 12px;z-index:-1;background:repeating-linear-gradient(0deg,transparent 0 7px,#8a9571 7px 10px,transparent 10px 15px)}.ds-pl-role{font-size:10px;margin:15px 0 0;white-space:normal;line-height:1.65;min-height:32px;color:var(--muted,#69695d)}.ds-chip{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;max-width:260px;padding:17px 18px 14px;background:var(--ink,#191c18);color:var(--paper,#f2eee2);box-shadow:0 12px 25px #252a1b1a;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%)}.ds-chip-top,.ds-chip-bottom{display:flex;justify-content:space-between;gap:8px;font-size:10px}.ds-chip-top{color:#c8cbb9}.ds-chip-top span,.ds-chip-bottom{color:var(--acid,#c2dc63)}.ds-chip>b{text-align:left;display:block;font-size:45px;letter-spacing:-.025em;margin:5px 0}.ds-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:8px 0 14px}.ds-grid i{aspect-ratio:1;background:#353b30;transition:background-color 130ms ease-out}.ds-grid i.ds-active{background:var(--acid,#c2dc63)}.ds-grid i.ds-alert{background:var(--accent,#e94c2c)}.ds-chip-bottom strong{font-weight:400;color:var(--paper,#f2eee2)}@media(prefers-reduced-motion:reduce){.ds-utility,.ds-dark,.ds-tab,.ds-grid i,.ds-evidence-steps span{transition:none!important;animation:none!important}}@media(max-width:600px){.ds-pl-role{font-size:10px;min-height:46px}}"
+    },
+    {
+      "name": "LCD Constraint Verdict",
+      "kind": "custom",
+      "refersTo": "lcd-constraint",
+      "description": "HTML approximation of the Pillow 278×90px light verdict box, preserving observed inset and type sizes; no runtime or pixel equivalence is claimed.",
+      "html": "<div class=\"ds-lcd-constraint\"><span>动作数据检查</span><strong>等待动作数据</strong></div>",
+      "css": ".ds-lcd-constraint{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;position:relative;width:278px;height:90px;background:#fffaee;color:var(--ink,#191c18);border-radius:6px}.ds-lcd-constraint span{position:absolute;left:16px;top:13px;font-size:18px;color:#5c5d51}.ds-lcd-constraint strong{position:absolute;left:16px;top:45px;font-size:28px;font-weight:700}.ds-lcd-constraint.ds-alert strong{color:#bc3422}@media(prefers-reduced-motion:reduce){.ds-utility,.ds-dark,.ds-tab,.ds-grid i,.ds-evidence-steps span{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Cooperation Readout",
+      "kind": "custom",
+      "description": "Explicit waiting-state readout. Received transactions replace these labels and correlate host action, FPGA check/reply and displayed board result to the same actual sequence; no control-PC reply receipt is implied. Real transaction cooperation may remain active while phase_current is false; packet flow is not a current-phase claim.",
+      "html": "<section class=\"ds-coop\"><h3>等待电脑发送动作数据</h3><div class=\"ds-coop-nodes\"><div class=\"ds-coop-node\"><strong>AI PC · 等待动作</strong><span>尚未收到可供检查的动作数据</span></div><div class=\"ds-coop-node\"><strong>FPGA · 准备检查</strong><span>配置已经核对，正式动作检查尚未开始</span></div><div class=\"ds-coop-node\"><strong>结果显示 · 等待结果</strong><span>板屏显示等待状态；本页来自同一份板端快照</span></div></div></section>",
+      "css": ".ds-coop{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;color:var(--ink,#191c18)}.ds-coop h3{font-size:18px;font-weight:400;margin:0 0 20px}.ds-coop-nodes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.ds-coop-node{text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px}.ds-coop-node strong{font-size:14px;min-height:20px}.ds-coop-node span{font-size:12px;line-height:1.6;max-width:160px;min-height:38px;color:var(--muted,#69695d)}@media(max-width:600px){.ds-coop-node span{max-width:84px;font-size:10px;min-height:43px}.ds-coop-node strong{font-size:11px;line-height:1.6;min-height:32px}}"
+    },
+    {
+      "name": "Recorded Action-Send State Age",
+      "kind": "custom",
+      "description": "Browser label for request.feedback_age_us, recorded when the computer sent that action. This unknown-value example does not imply phase freshness; stopped input preserves the last per-action value rather than counting toward now. The corresponding LCD label is 发出时距更新.",
+      "html": "<div class=\"ds-recorded-age\"><span>动作发出时距状态更新</span><strong>--</strong><small>电脑发出这条动作时，状态距上次更新的时间；停更后保留该次记录</small></div>",
+      "css": ".ds-recorded-age{font-family:DisplaySC,'Noto Sans CJK SC',sans-serif;display:flex;flex-direction:column;align-items:flex-start;gap:8px;max-width:260px;color:var(--ink,#191c18)}.ds-recorded-age span,.ds-recorded-age small{font-size:11px;color:var(--muted,#69695d)}.ds-recorded-age strong{font-size:27px;letter-spacing:-.03em;font-weight:400;font-variant-numeric:tabular-nums}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Result-Led Cooperation Monitor",
+    "overview": "Warm paper, charcoal, vermilion and acid green frame a compact industrial monitor. A Chinese state outcome leads; authored FPGA pins, wires and phase markers explain cooperation without competing with the result. Large light text on the LCD's charcoal status panel follows the user's physical-screen feedback.\n\nThe system preserves essential measured values and makes their source and age visible. The browser expands evidence and records; the portrait LCD concentrates the same observation into judge-readable outcomes. Its tone is precise and restrained, with no AI-purple or AI-blue identity. The visual metaphor names the implemented direction; it is not an approved concept comp or a claimed user pin.",
+    "keyCharacteristics": [
+      "Result-first Chinese judgments with essential measurements retained.",
+      "Warm flat surfaces with authored chip and wire geometry.",
+      "Source, freshness, correlated transaction number, current phase and historical state remain explicit.",
+      "Read-only companion controls support inspection and evidence export."
+    ],
+    "rules": [
+      {
+        "name": "The Status Contrast Rule",
+        "body": "Use light text on the charcoal status surface; use vermilion as a marker, not as small status text on black.",
+        "section": "colors"
+      },
+      {
+        "name": "The Box Legibility Rule",
+        "body": "Keep the LCD boxed label, verdict and feedback-age roles at their established enlarged sizes, and preserve an inset between every glyph and its frame.",
+        "section": "typography"
+      },
+      {
+        "name": "The Evidence Before Activity Rule",
+        "body": "Update phase highlights, chip cells, wires and charts only from received task and PL state; waiting and stale views must not generate simulated activity.",
+        "section": "components"
+      },
+      {
+        "name": "The Historical Phase Rule",
+        "body": "Call a phase current only with a fresh task sample, a PL phase-valid result and known recorded feedback age at most 100000μs; otherwise preserve it as the last phase and remove the live vermilion fill, independently of actual transaction flow.",
+        "section": "components"
+      },
+      {
+        "name": "The Transaction Correlation Rule",
+        "body": "Tie received action, FPGA check/reply and displayed result to the same actual sequence; do not imply that the control PC acknowledged receipt of the reply.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do lead with plain Chinese state outcomes, then source, age, correlated transaction number, phase and essential measurements.",
+      "Do preserve the enlarged LCD type roles and the balanced box insets.",
+      "Do keep unknown values, stale results, host claims, probes and synthetic input visibly distinct.",
+      "Do pair the current phase marker with literal current-phase text and preserve keyboard-visible focus.",
+      "Do use actual packet history for charts and actual submitted framebuffers for the LCD mirror."
+    ],
+    "donts": [
+      "Don't introduce the rejected AI-purple or AI-blue visual identity.",
+      "Don't render small red status text on the charcoal LCD panel.",
+      "Don't describe a global input check as permission to move a robot or an uncalibrated visual result as field success.",
+      "Don't animate pretend progress, invent utilization data or disguise synthetic captures as a live robot task.",
+      "Don't treat a framebuffer capture as a photograph or final proof of physical panel legibility."
+    ]
+  }
+}

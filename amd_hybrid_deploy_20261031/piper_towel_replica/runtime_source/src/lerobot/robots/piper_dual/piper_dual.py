@@ -245,13 +245,14 @@ class PIPERDual(Robot):
         self.right_bus.apply_calibration()
         self._is_calibrated = True
 
-    def get_observation(self) -> dict:
-        """Capture current joint positions and camera images"""
+    def get_motor_observation(self) -> dict:
+        """Read SDK motor caches and paired timestamps without waiting for cameras."""
         if not self._is_connected:
             raise DeviceNotConnectedError("Piper is not connected. Run `robot.connect()` first.")
 
         # Read left arm
         left_state = self.left_bus.read()
+        left_feedback = getattr(self.left_bus, 'last_feedback_timestamps', None)
         # left_state keys are like "joint_1_pos", "joint_1_effort"
         # Convert to f"left_{joint}.pos" and f"left_{joint}.effort"
         obs_dict = {}
@@ -263,16 +264,31 @@ class PIPERDual(Robot):
 
         # Read right arm
         right_state = self.right_bus.read()
+        right_feedback = getattr(self.right_bus, 'last_feedback_timestamps', None)
+        self._last_feedback_timestamps = dict(left=left_feedback, right=right_feedback)
         for key, val in right_state.items():
             suffix = key.rsplit("_", 1)
             new_key = f"{suffix[0]}.{suffix[1]}"
             obs_dict[f"right_{new_key}"] = float(val)
 
+        return obs_dict
+
+    def get_observation(self) -> dict:
+        """Capture current joint positions and camera images."""
+        obs_dict = self.get_motor_observation()
         # Read cameras
         for name, cam in self.cameras.items():
             obs_dict[name] = cam.async_read()
 
         return obs_dict
+
+    @property
+    def last_feedback_timestamps(self) -> dict | None:
+        """SDK timestamps captured with the most recent returned arm states."""
+        value = getattr(self, "_last_feedback_timestamps", None)
+        if value is None or not all(isinstance(times, dict) for times in value.values()):
+            return None
+        return {side: dict(times) for side, times in value.items()}
 
     def send_action(self, action: dict[str, float]) -> dict[str, float]:
         """Receive action dict from record() and send to motor"""

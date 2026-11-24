@@ -1,0 +1,334 @@
+{
+  "schema": "fpg1_v3_fve1_v1_wire_vectors_1_1",
+  "spec": "../../fpga_fpg1_v3_fve1_v1_protocol_zh.md",
+  "qualification": "Wire fixtures only; no RTL, timing or hardware verification.",
+  "positive": [
+    {
+      "name": "fpg1_task_signed",
+      "note": "Encoding fixture only; q is not a measured on-board run.",
+      "expected_length": 392,
+      "crc32": "4a1aed3e",
+      "hex": "4650473103016c01403020106e0200006010480100000000557f4c8f6d02000004000000c0a7410100000000e02e0000ffffffff00000000d0651a000054f2fff792fdffdce60000ba1102009c180000fb61ffffd0651a000054f2ffcb270000a2c901009599feff480d000000000000d0651a000054f2fff792fdffdce60000ba1102009c180000fb61ffffd0651a000054f2ffcb270000a2c901009599feff480d000000000000d0651a000054f2fff792fdffdce60000ba1102009c180000fb61ffffd0651a000054f2ffcb270000a2c901009599feff480d000000000000d0651a000054f2fff792fdffdce60000ba1102009c180000fb61ffffd0651a000054f2ffcb270000a2c901009599feff480d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003eed1a4a",
+      "decoded": {
+        "magic": "FPG1",
+        "version": 3,
+        "kind": 1,
+        "session": 270544960,
+        "sequence": 622,
+        "tick_us": 21500000,
+        "values": [
+          2404155221,
+          621,
+          4,
+          21080000,
+          12000,
+          4294967295,
+          0,
+          1730000,
+          -896000,
+          -158985,
+          59100,
+          135610,
+          6300,
+          -40453,
+          1730000,
+          -896000,
+          10187,
+          117154,
+          -91755,
+          3400,
+          0,
+          1730000,
+          -896000,
+          -158985,
+          59100,
+          135610,
+          6300,
+          -40453,
+          1730000,
+          -896000,
+          10187,
+          117154,
+          -91755,
+          3400,
+          0,
+          1730000,
+          -896000,
+          -158985,
+          59100,
+          135610,
+          6300,
+          -40453,
+          1730000,
+          -896000,
+          10187,
+          117154,
+          -91755,
+          3400,
+          0,
+          1730000,
+          -896000,
+          -158985,
+          59100,
+          135610,
+          6300,
+          -40453,
+          1730000,
+          -896000,
+          10187,
+          117154,
+          -91755,
+          3400,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "fpg1_fold_entered",
+      "note": "Fold transition: valid and changed, no look event yet; cycles=7 is synthetic.",
+      "expected_length": 68,
+      "crc32": "3a392c77",
+      "hex": "465047310302280040302010ca000000c0cf6a0000000000557f4c8f00000000000000000300000098080000030000000d0000000700000034475046ffffffff772c393a",
+      "decoded": {
+        "magic": "FPG1",
+        "version": 3,
+        "kind": 2,
+        "session": 270544960,
+        "sequence": 202,
+        "tick_us": 7000000,
+        "values": [
+          2404155221,
+          0,
+          0,
+          3,
+          2200,
+          3,
+          13,
+          7,
+          1179666228,
+          4294967295
+        ]
+      }
+    },
+    {
+      "name": "fpg1_look_pending",
+      "note": "Header sequence=622; original event sequence remains 621.",
+      "expected_length": 68,
+      "crc32": "3f4c5c74",
+      "hex": "4650473103022800403020106e0200006010480100000000557f4c8f00000000010000000400000098080000030000000601000007000000344750466d020000745c4c3f",
+      "decoded": {
+        "magic": "FPG1",
+        "version": 3,
+        "kind": 2,
+        "session": 270544960,
+        "sequence": 622,
+        "tick_us": 21500000,
+        "values": [
+          2404155221,
+          0,
+          1,
+          4,
+          2200,
+          3,
+          262,
+          7,
+          1179666228,
+          621
+        ]
+      }
+    },
+    {
+      "name": "fve1_feature",
+      "note": "Original design example; shape values are synthetic, not field calibration.",
+      "expected_length": 52,
+      "crc32": "6b789ea8",
+      "hex": "4656453101011800403020106d0200002282490100000000c0a741010000000009010000c210720169012823dc050100a89e786b",
+      "decoded": {
+        "magic": "FVE1",
+        "version": 1,
+        "kind": 1,
+        "session": 270544960,
+        "sequence": 621,
+        "tick_us": 21594658,
+        "values": [
+          21080000,
+          265,
+          4290,
+          370,
+          361,
+          9000,
+          1500,
+          1
+        ]
+      }
+    },
+    {
+      "name": "fve1_wait_stable",
+      "note": "After consuming first eligible shape frame.",
+      "expected_length": 44,
+      "crc32": "a5648fc9",
+      "hex": "4656453101021000403020106d020000228249010000000009010000010000000500000001000000c98f64a5",
+      "decoded": {
+        "magic": "FVE1",
+        "version": 1,
+        "kind": 2,
+        "session": 270544960,
+        "sequence": 621,
+        "tick_us": 21594658,
+        "values": [
+          265,
+          1,
+          5,
+          1
+        ]
+      }
+    },
+    {
+      "name": "fve1_query",
+      "note": "Read-only query.",
+      "expected_length": 28,
+      "crc32": "bb2e5f48",
+      "hex": "4656453101030000403020106d02000080b14f0100000000485f2ebb",
+      "decoded": {
+        "magic": "FVE1",
+        "version": 1,
+        "kind": 3,
+        "session": 270544960,
+        "sequence": 621,
+        "tick_us": 22000000,
+        "values": []
+      }
+    },
+    {
+      "name": "fve1_query_observed",
+      "note": "Synthetic terminal query result; does not imply a real completed run.",
+      "expected_length": 44,
+      "crc32": "16b3eab0",
+      "hex": "4656453101041000403020106d02000080b14f01000000000b010000020000000000000003000000b0eab316",
+      "decoded": {
+        "magic": "FVE1",
+        "version": 1,
+        "kind": 4,
+        "session": 270544960,
+        "sequence": 621,
+        "tick_us": 22000000,
+        "values": [
+          267,
+          2,
+          0,
+          3
+        ]
+      }
+    },
+    {
+      "name": "fve1_query_unconfirmed",
+      "note": "Alternative timeout scenario, independent from observed fixture.",
+      "expected_length": 44,
+      "crc32": "bbb9290a",
+      "hex": "4656453101041000403020106d020000c0f35e0100000000090100000300000008000000000000000a29b9bb",
+      "decoded": {
+        "magic": "FVE1",
+        "version": 1,
+        "kind": 4,
+        "session": 270544960,
+        "sequence": 621,
+        "tick_us": 23000000,
+        "values": [
+          265,
+          3,
+          8,
+          0
+        ]
+      }
+    }
+  ],
+  "negative": [
+    {
+      "name": "truncated",
+      "hex": "4650473103022800403020106e0200006010480100000000557f4c8f00000000010000000400000098080000030000000601000007000000344750466d020000745c4c",
+      "expected_error": "bad_length"
+    },
+    {
+      "name": "trailing_byte",
+      "hex": "4650473103022800403020106e0200006010480100000000557f4c8f00000000010000000400000098080000030000000601000007000000344750466d020000745c4c3f00",
+      "expected_error": "bad_length"
+    },
+    {
+      "name": "crc_corruption",
+      "hex": "4650473103022800403020106e0200006010480100000000557f4c8f00000000010000000400000099080000030000000601000007000000344750466d020000745c4c3f",
+      "expected_error": "bad_crc"
+    },
+    {
+      "name": "old_version",
+      "hex": "4650473101022800403020106e0200006010480100000000557f4c8f00000000010000000400000098080000030000000601000007000000344750466d0200002b479a71",
+      "expected_error": "unsupported_header"
+    },
+    {
+      "name": "old_48_byte_reply",
+      "hex": "4650473101021400403020106e0200006010480100000000557f4c8f00000000010000000400000098080000dc8b0a12",
+      "expected_error": "unsupported_header"
+    },
+    {
+      "name": "unsupported_kind",
+      "hex": "4650473103032800403020106e0200006010480100000000557f4c8f00000000010000000400000098080000030000000601000007000000344750466d02000085590056",
+      "expected_error": "unsupported_header"
+    },
+    {
+      "name": "reserved_reply_flag",
+      "hex": "4650473103022800403020106e0200006010480100000000557f4c8f00000000010000000400000098080000030000001601000007000000344750466d020000ea626bd9",
+      "expected_error": "reserved_response_bits"
+    },
+    {
+      "name": "missing_pending_event",
+      "hex": "4650473103022800403020106e0200006010480100000000557f4c8f0000000001000000040000009808000003000000060100000700000034475046ffffffff27873f2b",
+      "expected_error": "inconsistent_event_flags"
+    },
+    {
+      "name": "changed_without_valid",
+      "hex": "4650473103022800403020106e0200006010480100000000557f4c8f00000000010000000400000098080000030000000a01000007000000344750466d020000bc8f6e98",
+      "expected_error": "inconsistent_stage_flags"
+    },
+    {
+      "name": "bad_build_id",
+      "hex": "4650473103022800403020106e0200006010480100000000557f4c8f00000000010000000400000098080000030000000601000007000000324750466d020000f35523f9",
+      "expected_error": "bad_result_identity"
+    },
+    {
+      "name": "reserved_feature_flag",
+      "hex": "4656453101011800403020106d0200002282490100000000c0a741010000000009010000c210720169012823dc0503002afc4e59",
+      "expected_error": "reserved_feature_flags"
+    },
+    {
+      "name": "unknown_frame_id",
+      "hex": "4656453101011800403020106d0200002282490100000000c0a7410100000000ffffffffc210720169012823dc05010034ffbc1c",
+      "expected_error": "bad_frame_id"
+    }
+  ]
+}

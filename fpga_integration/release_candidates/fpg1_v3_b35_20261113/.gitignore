@@ -1,0 +1,7 @@
+__pycache__/
+validation_runs/
+.Xil/
+*.jou
+*.log
+*.str
+*.vvp

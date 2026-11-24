@@ -1,0 +1,19 @@
+Build: FPG1 v3 / FVE1 v1 B34 with LCD1
+Target: xc7z020clg400-2
+Tool: Vivado 2018.3
+Clock: FCLK0 50 MHz; LCD pixel clock 25 MHz
+Build log: validation_runs/vivado_fpg1_v3_b34_20261113_final.log
+
+Validation:
+- Synthesis, implementation, route and bitgen completed successfully.
+- Routed DRC: 0 errors, 24 warnings (21 unused LCD RGB input buffers and 3 LCD DSP pipelining recommendations).
+- Timing: setup WNS +3.673 ns, hold WHS +0.089 ns, zero failing endpoints.
+- RTL suite: scripts/run_rtl_simulations.ps1; all six testbenches pass, including
+  AXI register-driven OPEN/GRIP/FOLD, retreat event and stable FVE1 confirmation.
+- Python suite: 68 workspace tests pass; 8 positive and 12 negative protocol fixtures pass.
+- No target-board loading, PYNQ HWH parser test, LCD panel check, FPGA network test,
+  or field camera calibration has been performed.
+
+SHA256
+4B8CAFE8E742B78BA1448EB1AB29E7F781CD3EDC18C8CC8D1B6C5F654E0D8D12  fpg1_v3_b34_20261113_final.bit
+6CAD3F1F2AB7DBE5ECF8411E8F08B75C4A31968021706087F28C58AA480D72D7  fpg1_v3_b34_20261113_final.hwh

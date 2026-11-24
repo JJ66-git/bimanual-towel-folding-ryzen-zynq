@@ -1,0 +1,38 @@
+{
+  "created_at": "2026-11-13T20:46:32.309225+08:00",
+  "scope": "manual VLA raw episode collection with durable storage",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "returncode": 0,
+      "output": "test_fail_boundary_and_original_with_increasing_diagnostic_ticks (test_booth.BoardTests.test_fail_boundary_and_original_with_increasing_diagnostic_ticks) ... ok\ntest_no_reply_is_error_without_reference_fallback (test_booth.BoardTests.test_no_reply_is_error_without_reference_fallback) ... ok\ntest_old_reply_ignored_and_idle_session_reprobed (test_booth.BoardTests.test_old_reply_ignored_and_idle_session_reprobed) ... ok\ntest_assets_and_live_configuration (test_booth.HttpTests.test_assets_and_live_configuration) ... ok\ntest_manual_capture_endpoints_write_to_dedicated_folder (test_booth.HttpTests.test_manual_capture_endpoints_write_to_dedicated_folder) ... ok\ntest_no_hardware_record_and_action_header (test_booth.HttpTests.test_no_hardware_record_and_action_header) ... ok\ntest_validation_and_reference_results (test_booth.HttpTests.test_validation_and_reference_results) ... ok\ntest_fresh_complete_components_required (test_booth.LeaderTests.test_fresh_complete_components_required) ... ok\ntest_disconnect_preserves_partial_data_and_marks_interrupted (test_capture.CaptureTests.test_disconnect_preserves_partial_data_and_marks_interrupted) ... ok\ntest_disk_failure_is_not_reported_as_success (test_capture.CaptureTests.test_disk_failure_is_not_reported_as_success) ... ok\ntest_instruction_images_and_alignment_saved_together (test_capture.CaptureTests.test_instruction_images_and_alignment_saved_together) ... ok\ntest_manual_stop_after_more_than_three_seconds_and_repeated_episodes (test_capture.CaptureTests.test_manual_stop_after_more_than_three_seconds_and_repeated_episodes) ... ok\ntest_rehearsals_separated_and_invalid_requests_rejected (test_capture.CaptureTests.test_rehearsals_separated_and_invalid_requests_rejected) ... ok\ntest_shutdown_preserves_an_interrupted_episode (test_capture.CaptureTests.test_shutdown_preserves_an_interrupted_episode) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 3.475s\n\nOK\n"
+    },
+    {
+      "command": [
+        "node",
+        "tests/test_interaction.js"
+      ],
+      "returncode": 0,
+      "output": "PASS: guard regression, manual start/stop, instruction, camera upload, saved folder, JSON copy, stop retry, separate rehearsal storage\n"
+    }
+  ],
+  "html_assets_checked": true,
+  "python_syntax_checked": true,
+  "network_loopback_verified": false,
+  "browser_render_verified": false,
+  "physical_hardware_verified": false,
+  "limitations": [
+    "Execution policy denies local HTTP/UDP socket creation.",
+    "Browser render, real CAN and browser camera capture require field validation.",
+    "V/L/A collection saves raw fragments; follower feedback, other views and training conversion remain absent."
+  ]
+}

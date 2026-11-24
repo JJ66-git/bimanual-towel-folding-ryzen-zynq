@@ -1,5 +1,11 @@
 # 双臂折叠毛巾：基于 Ryzen AI 与 Zynq 的具身智能系统
 
+## FlexiFold 实机更新
+
+本版包含当前 B35 板端包、实机启动面板、毛巾摆位参考和首折失败后的确认归位。参见 [完整部署](docs/deployment_zh.md)、[模型与运行资产](docs/runtime_assets_zh.md)、[B35 安装](docs/b35_board_zh.md)和[竞赛技术报告](docs/competition_report_zh.md)。
+
+拉取后，把单独交付的 `FlexiFold_Runtime_Assets` 放在仓库旁，从仓库根目录运行 `python3 tools/link_runtime_assets.py` 配置本地权重。
+
 中文 | [English](readme.md)
 
 我们希望让一套桌面级双臂机器人完成从观察毛巾、生成动作到实际抓取和折叠的完整过程。系统使用三路 RGB 相机与两只 AgileX Piper 机械臂，在 AMD Ryzen AI PC 上运行 ACT 与 SmolVLA 混合策略，同时通过以太网将动作和反馈的副本发送给 Zynq-7020，由 FPGA 的定点硬件检查逻辑进行旁路诊断，并在板端 LCD 上展示状态。
@@ -131,7 +137,7 @@ PC 与 FPGA 使用有线以太网和 UDP；诊断协议 `FPG1` 采用小端序�
 项目代码和 FPGA 构建产物已公开，但自训练权重、NPU 导出模型、驱动、私有密钥和大部分现场原始数据未包含；因此目前**不能保证克隆后即可从零复现完整任务**。执行真实动作前，请先确认机器人工作空间、电源、限位和独立物理急停。复位和策略脚本会移动机械臂；Ctrl+C 和 FPGA 屏幕都不是急停。
 
 1. 参考上方设备清单，搭建双臂、相机、AI PC 与 Zynq，并确认各自电源及网络；根据[技术报告第 11 节](docs/technical_report_zh.md)准备兼容 Linux、ROCm、Ryzen AI、XRT、Piper SDK 和 PYNQ 环境。
-2. 自行恢复项目的 ACT / SmolVLA checkpoint、处理器及相匹配的 NPU ONNX 等资产，按报告核对文件身份；这些训练权重不能从公开底座自动还原。
+2. 按 [模型与运行资产](docs/runtime_assets_zh.md) 的步骤，用 `tools/link_runtime_assets.py` 配置本地 ACT、SmolVLA、处理器及配套 NPU ONNX。
 3. 修改 `amd_hybrid_deploy_20261031/piper_towel_replica/configs/cobot_site.json` 中的设备身份及实际路径、IP，核对相机角色、CAN 绑定和板卡位流；不要照搬历史设备编号。
 4. 阅读 [展示指南](npu_deploy/showcase_guide_zh.md)、[FPGA 协议](fpga_integration/fpga_code/fpga_workspace/docs/protocol.md)和[板端运行说明](fpga_integration/fpga_code/fpga_workspace/docs/runbook.md)，先做无动作检查：
 

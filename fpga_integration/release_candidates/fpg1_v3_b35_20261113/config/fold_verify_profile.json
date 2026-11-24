@@ -1,0 +1,74 @@
+{
+  "schema": "fold_verify_profile_v1",
+  "protocol_versions": {
+    "FPG1": 3,
+    "FVE1": 1
+  },
+  "build_id": 1179666229,
+  "fclk_hz": 50000000,
+  "unit_scale": 1000000,
+  "guard_profile_crc": 2404155221,
+  "camera": {
+    "role": "middle",
+    "width": 640,
+    "height": 480,
+    "roi": [
+      0,
+      0,
+      640,
+      480
+    ],
+    "scale_numerator": 1,
+    "scale_denominator": 1
+  },
+  "feature_algorithm": {
+    "version": "synthetic_feature_vectors_v1",
+    "hsv_lower": null,
+    "hsv_upper": null,
+    "morphology": null,
+    "real_image_extraction_enabled": false
+  },
+  "stage": {
+    "open_gripper_min": 30000,
+    "grip_gripper_max": 10000,
+    "fold_gripper_max": 12000,
+    "fold_j2_min": 1600000,
+    "fold_j2_max": 1950000,
+    "fold_j3_min": -1150000,
+    "fold_j3_max": -720000,
+    "open_hold_us": 100000,
+    "grip_hold_us": 100000,
+    "fold_hold_us": 120000,
+    "min_samples": 3
+  },
+  "retreat": {
+    "j2_min": 0,
+    "j2_max": 950000,
+    "j3_min": -650000,
+    "j3_max": 50000,
+    "hold_us": 120000,
+    "min_samples": 3
+  },
+  "timing": {
+    "feedback_age_us": 100000,
+    "observation_gap_us": 200000,
+    "local_joint_timeout_us": 200000,
+    "event_window_us": 1500000,
+    "frame_gap_us": 350000,
+    "stable_span_us": 180000
+  },
+  "vision": {
+    "min_frames": 3,
+    "area_min_bp": 4000,
+    "area_max_bp": 4700,
+    "area_delta_bp": 200,
+    "center_delta_px": 8,
+    "rectangularity_min_bp": 0,
+    "rectangularity_max_bp": 10000,
+    "dark_min_bp": 0,
+    "dark_max_bp": 10000
+  },
+  "calibration_id": "synthetic_b35_20261113",
+  "calibration_status": "synthetic_test",
+  "field_validation_evidence": []
+}

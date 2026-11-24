@@ -1,0 +1,53 @@
+Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+| Date         : Fri Nov 13 20:27:33 2026
+| Host         : ysyx-Mini-GTR running 64-bit Ubuntu 24.04.5 LTS
+| Command      : report_clocks -file /home/ysyx/FPGA_competition/bimanual-towel-folding-ryzen-zynq/fpga_integration/release_candidates/fpg1_v3_b35_20261113/overlay/lcd_framebuffer_fpg1_v3_b35_20261113_revision/implementation_check/clocks.txt
+| Design       : system_wrapper
+| Device       : 7z020-clg400
+| Speed File   : -2  PRODUCTION 1.11 2014-09-11
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Clock Report
+
+
+Attributes
+  P: Propagated
+  G: Generated
+  A: Auto-derived
+  R: Renamed
+  V: Virtual
+  I: Inverted
+  S: Pin phase-shifted with Latency mode
+
+Clock       Period(ns)  Waveform(ns)    Attributes  Sources
+clk_fpga_0  20.000      {0.000 10.000}  P           {system_i/ps7/inst/PS7_i/FCLKCLK[0]}
+lcd_pixel   40.000      {0.000 20.000}  P,G         {lcd_clk}
+
+
+====================================================
+Generated Clocks
+====================================================
+
+Generated Clock     : lcd_pixel
+Master Source       : system_i/lcd/inst/lcd_clk_reg/C
+Master Clock        : clk_fpga_0
+Divide By           : 2
+Generated Sources   : {lcd_clk}
+
+
+
+====================================================
+User Uncertainty
+====================================================
+
+
+
+====================================================
+User Jitter
+====================================================
+
+Clock       Jitter(ns)
+clk_fpga_0  0.600
+

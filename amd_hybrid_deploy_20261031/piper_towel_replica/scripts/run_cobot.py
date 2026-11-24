@@ -14,9 +14,19 @@ def main():
     p.add_argument('--preview',action='store_true')
     p.add_argument('--trace',action='store_true')
     p.add_argument('--capture-refills',action='store_true')
+    p.add_argument('--first-grasp-check',action='store_true',help='Record first-grasp load diagnostics')
+    p.add_argument('--first-grasp-approach',action='store_true',help='Trial of bounded clearance during the initial pinch approach')
+    p.add_argument('--finish-check',action='store_true',help='Stop after stable folded cloth, release and arm retreat')
+    p.add_argument('--act-fp16',action='store_true',help='Use ROCm FP16 autocast for ACT inference')
     args=p.parse_args()
     if args.steps is not None and (args.steps<1 or args.phase=='reset'): p.error('steps requires act/hybrid and positive integer')
     if args.phase=='reset' and (args.preview or args.capture_refills): p.error('reset has no preview/refill capture')
+    if args.phase=='reset' and args.first_grasp_check: p.error('first-grasp check requires act or hybrid')
+    if args.first_grasp_approach and (args.phase=='reset' or not args.act_fp16):
+        p.error('first-grasp approach requires act or hybrid with ACT FP16')
+    if args.phase=='reset' and (args.finish_check or args.act_fp16):
+        p.error('finish check and ACT FP16 require act or hybrid')
+    if args.act_fp16 and args.backend!='rocm': p.error('ACT FP16 requires ROCm')
     site=json.loads((ROOT/'configs/cobot_site.json').read_text())
     common=['--left-can',site['robot']['left_port'],'--right-can',site['robot']['right_port']]
     pose=ROOT/site['training_start_pose']
@@ -38,6 +48,10 @@ def main():
           '--handoff-step',str(site['handoff_step'] if args.phase=='hybrid' else 0)]
         for role in ('left','middle','right'): launch += ['--'+role+'-index',str(site['camera_indices'][role])]
         if args.phase=='act': launch.append('--act-only')
+        if args.first_grasp_check: launch.append('--first-grasp-check')
+        if args.first_grasp_approach: launch.append('--first-grasp-approach')
+        if args.finish_check: launch.append('--finish-check')
+        if args.act_fp16: launch.append('--act-fp16')
     if args.execute: launch.append('--execute')
     directory=ROOT/'logs'/f'{args.phase}_{time.time_ns()}'
     if args.capture_refills:

@@ -2,6 +2,7 @@
 # Compares native ROCm and experimental NPU vision without accessing a robot.
 set -eo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/npu_deploy/runtime_resources.sh"
 LOG="$ROOT/npu_deploy/artifacts/smol_vision/policy_rocm_npu.log"
 LIMIT="$(ulimit -l)"
 if [[ "$LIMIT" != unlimited && "$LIMIT" -lt 1048576 ]]; then
@@ -11,7 +12,7 @@ fi
 set +e
 env -u LD_PRELOAD -u LD_LIBRARY_PATH -u PYTHONPATH -u PYTHONHOME -u GLIBC_TUNABLES \
   HF_HOME="${HF_HOME:-/tmp/fpga-hf-cache}" \
-  OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 \
+  OMP_NUM_THREADS="$OMP_NUM_THREADS" MKL_NUM_THREADS="$MKL_NUM_THREADS" OPENBLAS_NUM_THREADS="$OPENBLAS_NUM_THREADS" \
   "$ROOT/amd_hybrid_deploy_20261031/.venv/bin/python" "$ROOT/npu_deploy/compare_smol_policy.py" \
   --backend rocm --worker npu --warmup 0 --repeat 1 "$@" > "$LOG" 2>&1
 RESULT=$?

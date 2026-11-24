@@ -116,6 +116,44 @@ class ShadowTests(unittest.TestCase):
             self.assertEqual(summary['reference_matches'], 0)
             self.assertEqual(summary['violations'], 1)
 
+    def test_dashboard_gets_only_matched_dispatched_task_replies(self):
+        from shared_runtime import dashboard_telemetry as telemetry
+        token=telemetry.install()
+        try:
+            with tempfile.TemporaryDirectory() as parent, patch.object(shadow,'ReferenceTransport',FakeTransport):
+                monitor=shadow.FpgaShadow(('127.0.0.1',9009),Path(parent)/'run',max_actions=750,handoff_step=300)
+                probe=monitor.probe()
+                self.assertIsNone(token[0].board)
+                values=[0.]*14
+                monitor.submit(step=2,elapsed=.1,target=values,measured=values,previous=values,
+                    act=values,correction=values,previous_correction=values,blended=False,dispatched=True)
+                deadline=time.monotonic()+2
+                while token[0].board is None and time.monotonic()<deadline:time.sleep(.005)
+                monitor.close()
+                value=token[0].board
+                self.assertEqual(value.session,probe['session'])
+                self.assertEqual(value.sequence,1)
+                self.assertEqual(value.step,2)
+                self.assertEqual(value.checked_count,1)
+                self.assertEqual(value.round_trip_ms,.12)
+                self.assertEqual(token[0].board_link.address,('127.0.0.1',9009))
+        finally:telemetry.uninstall(token)
+
+    def test_display_failure_does_not_change_original_check_counts(self):
+        with tempfile.TemporaryDirectory() as parent, patch.object(shadow,'ReferenceTransport',FakeTransport), \
+             patch('shared_runtime.dashboard_telemetry.publish_board',side_effect=RuntimeError('display failed')):
+            monitor=shadow.FpgaShadow(('127.0.0.1',9009),Path(parent)/'run',max_actions=750,handoff_step=300)
+            values=[0.]*14
+            monitor.submit(step=0,elapsed=0,target=values,measured=values,previous=values,
+                act=values,correction=values,previous_correction=values,blended=False,dispatched=True)
+            deadline=time.monotonic()+2
+            while monitor.client.stats()['replied']<1 and time.monotonic()<deadline:time.sleep(.005)
+            monitor.close()
+            summary=json.loads((monitor.output/'summary.json').read_text())
+            self.assertEqual(summary['checked'],1)
+            self.assertEqual(summary['callback_errors'],0)
+            self.assertEqual(summary['reference_matches'],1)
+
     def test_invalid_values_do_not_enter_queue(self):
         with tempfile.TemporaryDirectory() as parent, patch.object(shadow, 'ReferenceTransport', FakeTransport):
             monitor = shadow.FpgaShadow(('127.0.0.1',9009), Path(parent)/'run',

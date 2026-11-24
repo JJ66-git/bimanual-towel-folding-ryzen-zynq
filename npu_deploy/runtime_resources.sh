@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Shared resource envelope: all CPUs available, memory headroom for the desktop.
+# Sourced by launchers; no hardware configuration or actuator commands.
+AIPC_RUNTIME_CPUS="$(getconf _NPROCESSORS_ONLN)"
+AIPC_RUNTIME_MEMORY_GIB="$(awk '/^MemTotal:/ {g=int($2/1048576); budget=g-5; if (budget<4) budget=int(g*0.7); if (budget<1) budget=1; print budget}' /proc/meminfo)"
+AIPC_RUNTIME_MEMORY_MAX="${AIPC_HYBRID_MEMORY_MAX:-${AIPC_RUNTIME_MEMORY_GIB}G}"
+AIPC_RUNTIME_CPU_QUOTA="${AIPC_HYBRID_CPU_QUOTA:-$((AIPC_RUNTIME_CPUS*100))%}"
+AIPC_RUNTIME_DEFAULT_THREADS=8
+if (( AIPC_RUNTIME_CPUS < AIPC_RUNTIME_DEFAULT_THREADS )); then AIPC_RUNTIME_DEFAULT_THREADS="$AIPC_RUNTIME_CPUS"; fi
+AIPC_RUNTIME_THREADS="${AIPC_HYBRID_THREADS:-$AIPC_RUNTIME_DEFAULT_THREADS}"
+if [[ ! "$AIPC_RUNTIME_THREADS" =~ ^[1-9][0-9]*$ || "$AIPC_RUNTIME_THREADS" -gt "$AIPC_RUNTIME_CPUS" ]]; then
+  echo 'AIPC_HYBRID_THREADS 必须是 1 到在线逻辑 CPU 数之间的整数。' >&2
+  return 2
+fi
+export AIPC_RUNTIME_MEMORY_MAX AIPC_RUNTIME_CPU_QUOTA AIPC_RUNTIME_THREADS
+export OMP_NUM_THREADS="${OMP_NUM_THREADS:-$AIPC_RUNTIME_THREADS}"
+export MKL_NUM_THREADS="${MKL_NUM_THREADS:-$AIPC_RUNTIME_THREADS}"
+export OPENBLAS_NUM_THREADS="${OPENBLAS_NUM_THREADS:-$AIPC_RUNTIME_THREADS}"

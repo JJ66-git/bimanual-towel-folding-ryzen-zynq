@@ -7,6 +7,8 @@ import time
 
 import numpy as np
 
+from shared_runtime.placement_camera_feed import PlacementCameraFeed
+
 ROLES = ('left', 'middle', 'right')
 
 
@@ -88,6 +90,7 @@ class RunRecorder:
         import cv2
         writers, shapes, last_images = {}, {}, None
         media_failed = False
+        placement_feed = PlacementCameraFeed(self.directory.parent)
         try:
             with (self.directory / 'robot_events.jsonl').open('w', buffering=1) as events, \
                     (self.directory / 'frame_times.jsonl').open('w', buffering=1) as times:
@@ -128,7 +131,10 @@ class RunRecorder:
                         if any(image.shape != shapes[role] for role, image in images.items()):
                             raise ValueError('Task camera dimensions changed during recording')
                         for role, image in images.items():
-                            writers[role].write(cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
+                            bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+                            writers[role].write(bgr)
+                            if role == 'middle':
+                                placement_feed.publish(bgr)
                         writers['three_views'].write(cv2.cvtColor(np.hstack([images[r] for r in ROLES]),
                                                                   cv2.COLOR_RGB2BGR))
                         with self.lock:
@@ -148,6 +154,7 @@ class RunRecorder:
         except Exception as error:
             self._increment('write_errors', error)
         finally:
+            placement_feed.close_writer()
             for writer in writers.values():
                 writer.release()
 

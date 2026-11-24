@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import logging
 import signal
+import sys
 import time
 from pathlib import Path
 
@@ -61,6 +62,9 @@ from blend_core import (
     positions,
     validate_absolute,
 )
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from shared_runtime.dashboard_telemetry import create_run
 
 SOFT_LIMIT_PROJECTION_MARGIN = 0.02
 
@@ -174,6 +178,10 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--capture-refills", type=Path, help="Save exact ACT refill inputs/chunks and separate actual targets after stopping (ACT or hybrid)")
     p.add_argument("--quality-profile", type=Path, help="Optional blue towel staging/visual stop heuristic; never changes actions or safety bounds")
+    p.add_argument("--first-grasp-check", action="store_true", help="Record first-grasp load diagnostics")
+    p.add_argument("--first-grasp-approach", action="store_true", help="Trial of bounded clearance during the initial pinch approach")
+    p.add_argument("--finish-check", action="store_true", help="Stop after stable folded cloth, release and arm retreat")
+    p.add_argument("--act-fp16", action="store_true", help="Use ROCm FP16 autocast for ACT inference")
     p.add_argument("--trace-file", type=Path, help="Buffer per-tick vectors in memory; write only after stopping")
     p.add_argument("--motion-profile", type=Path, required=True)
     p.add_argument("--observation-profile", type=Path,
@@ -182,10 +190,20 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--act-only", action="store_true", help="Keep reference ACT path; never resume Smol RTC")
     p.add_argument("--execute", action="store_true")
     args = p.parse_args()
+    if args.act_fp16 and args.backend != "rocm":
+        p.error("ACT FP16 requires ROCm")
+    if args.finish_check and (args.resume_current or args.quality_profile is not None):
+        p.error("Finish check requires the task origin and uses its own visual observations")
     if args.fps <= 0 or args.max_actions < 1:
         p.error("fps and max-actions must be positive")
     if not 0 <= args.handoff_step < args.max_actions:
         p.error("handoff-step must be in [0, max-actions)")
+    if args.first_grasp_check and args.resume_current:
+        p.error("first-grasp check requires starting from the task origin")
+    if args.first_grasp_approach and (args.resume_current or args.capture_refills
+                                    or not args.act_fp16
+                                    or (not args.act_only and args.handoff_step < 220)):
+        p.error("first-grasp approach requires the native ROCm FP16 start with a separate ACT grasp phase")
     if not 1 <= args.execution_horizon < 50:
         p.error("execution-horizon must be in [1, 49]")
     if not 1 <= args.queue_threshold < 50:
@@ -213,11 +231,55 @@ def action_dict(action: np.ndarray) -> dict[str, float]:
     return {k: float(v) for k, v in zip(ACTION_NAMES, action, strict=True)}
 
 
-def as_action(value: torch.Tensor, *, project_soft_limits: bool) -> np.ndarray:
+def finish_from_camera(check, camera, step, measured, previous, grippers, *, held_since=None,
+                       first_fold_retry=False):
+    # Capture a consistent frame and host timestamp from the existing reader.
+    with camera.frame_lock:
+        rgb = camera.latest_frame
+        frame_id = camera.latest_frame_id
+        captured_s = camera.latest_timestamp
+    if rgb is None or captured_s is None:
+        return None
+    return check.update(rgb, frame_id=frame_id, captured_s=captured_s, now_s=time.perf_counter(),
+                        step=step, measured=measured, previous=previous, grippers=grippers,
+                        held_since=held_since, first_fold_retry=first_fold_retry)
+
+
+def confirm_finish_while_held(check, wrapper, robot, hold, step, stop_requested):
+    """Read fresh feedback and images after the measured-pose hold command."""
+    if check.regrasp is None or not check.retreated(hold, holding=True):
+        return None
+    from fpga_feedback_age import FeedbackAgeClock
+    # The normal sidecar path can use the stock SDK's cached receipt times.
+    feedback_clock = FeedbackAgeClock(allow_wall_clock=True)
+    held_since = time.perf_counter()
+    deadline = held_since + 1.0
+    camera = robot.cameras["middle"]
+    while not stop_requested() and (remaining := deadline - time.perf_counter()) > 0:
+        try:
+            motors, stamps, _ = wrapper.get_feedback_snapshot(timeout=min(.05, remaining))
+        except TimeoutError:
+            check.window.clear()
+        else:
+            measured = positions(motors)
+            joint_error, _ = max_parts(np.abs(measured - hold))
+            if feedback_clock.age_us(stamps) <= 100_000 and joint_error <= .05:
+                evidence = finish_from_camera(
+                    check, camera, step, measured, hold, gripper_snapshot(robot), held_since=held_since,
+                )
+                if evidence is not None and not stop_requested():
+                    return evidence
+            else:
+                check.window.clear()
+        time.sleep(max(0., min(.04, deadline - time.perf_counter())))
+    return None
+
+
+def as_action(value: torch.Tensor, *, project_soft_limits: bool, projection_label='candidate') -> np.ndarray:
     result = value.detach().float().cpu().numpy().reshape(-1)
     if result.shape != (14,) or not np.isfinite(result).all():
         raise RuntimeError(f"Invalid action: shape={result.shape}, finite={np.isfinite(result).all()}")
-    result = result.astype(np.float32, copy=False)
+    result = result.astype(np.float32, copy=project_soft_limits)
     # Piper's gripper driver uses abs(); make the intended physical boundary explicit.
     result[GRIPPER] = np.clip(result[GRIPPER], 0.0, 0.08)
     if project_soft_limits:
@@ -226,7 +288,7 @@ def as_action(value: torch.Tensor, *, project_soft_limits: bool) -> np.ndarray:
         if 0.0 < joint_violation <= SOFT_LIMIT_PROJECTION_MARGIN:
             result[ARM] = np.clip(result[ARM], LOWER[ARM], UPPER[ARM])
             print(
-                f"soft_limit_projection max_correction={joint_violation:.6f} rad",
+                f"soft_limit_projection policy={projection_label} max_correction={joint_violation:.6f} rad",
                 flush=True,
             )
     return result
@@ -314,6 +376,16 @@ def capture_act_start(frame, obs, act_action, target, measured, previous, featur
 
 def main() -> int:
     args = parse_args()
+    import os
+    handover_recovery_enabled = os.environ.get("AIPC_TOWEL_RELEASE_RECOVERY") == "1"
+    if handover_recovery_enabled and (not args.finish_check or not args.act_fp16 or args.capture_refills):
+        raise ValueError("Left release recovery requires the normal FP16 fold monitor")
+    if os.environ.get('AIPC_FPGA_AUTHORITY_CONFIG'):
+        if args.finish_check or args.act_fp16 or args.first_grasp_approach or handover_recovery_enabled:
+            raise ValueError('FPGA authority requires the qualified ACT and termination settings')
+        from fpga_action_authority import load_execution_config
+        load_execution_config(os.environ['AIPC_FPGA_AUTHORITY_CONFIG'],execute=args.execute,max_actions=args.max_actions,
+                    handoff_step=args.handoff_step,fps=args.fps,quality_profile=args.quality_profile)
     import blend_core as reference_core
     from cobot_motion_adapter import load_motion_profile, configure_bounds, configure_act, constrain_correction
     motion = load_motion_profile(args.motion_profile, reference_core)
@@ -340,6 +412,8 @@ def main() -> int:
     from lerobot.policies.act.configuration_act import ACTConfig
     act_config = configure_act(ACTConfig.from_pretrained(str(args.act_model)), motion)
     act_config.device = str(device)
+    if args.act_fp16:
+        act_config.use_amp = True
     act = ACTPolicy.from_pretrained(str(args.act_model), config=act_config)
     place_policy(act, device, args.precision)
     act_pre, act_post = make_pre_post_processors(
@@ -398,6 +472,22 @@ def main() -> int:
     install_training_effort_adapter(act_pre, state_names, "ACT")
     install_training_effort_adapter(smol_pre, state_names, "SmolVLA")
     ordered_actions = list(robot.action_features)
+    # Saved absolute-action ACT and its training adapters have stateless
+    # observation processing. Keep the full preprocessing path for captures.
+    cached_act = (args.act_fp16 and args.capture_refills is None
+                  and act.config.temporal_ensemble_coeff is None)
+    fused_act_backbone = False
+    if cached_act:
+        from act_refill_backbone import optimize_act_refill_backbone
+        fused_act_backbone = optimize_act_refill_backbone(act.model)
+    grasp_approach = None
+    if args.first_grasp_approach:
+        if not cached_act or act.config.n_action_steps != 50:
+            raise ValueError("First-grasp approach requires the native 50-action ACT queue")
+        from first_grasp_approach import FirstGraspApproach
+        grasp_approach = FirstGraspApproach(act_post, act.config.n_action_steps, LOWER, UPPER,
+                                            args.global_lowpass_alpha)
+        act.on_action_refill = grasp_approach.on_refill
     act_engine = SyncInferenceEngine(
         policy=act,
         preprocessor=act_pre,
@@ -407,6 +497,7 @@ def main() -> int:
         task=args.task,
         device=str(device),
         robot_type=robot.robot_type,
+        queued_action_ready=(lambda: bool(act._action_queue)) if cached_act else None,
     )
     smol_engine = RTCInferenceEngine(
         policy=smol,
@@ -423,12 +514,28 @@ def main() -> int:
     )
 
     quality_monitor = None
+    finish_check = None
+    handover_check = None
     if args.quality_profile is not None:
         from towel_quality import TowelQualityMonitor
         quality_monitor = TowelQualityMonitor(args.quality_profile)
+    if args.finish_check:
+        from fold_handover import BRIDGE_STEPS, FoldHandoverCheck, longest_open, suitable_fold_view, usable_recovery
+        from lerobot.policies.utils import prepare_observation_for_inference
+        handover_check = FoldHandoverCheck()
+    if handover_recovery_enabled and (not cached_act or act.config.n_action_steps != 50):
+        raise ValueError("Left release recovery requires the native 50-action ACT queue")
     termination_reason = "action_budget"
+    first_grasp_check = first_grasp_miss = None
+    wrist_corner_check = None
+    first_grasp_load_drops = {}
+    if args.first_grasp_check:
+        from first_grasp_check import FirstGraspCheck, WristCornerCheck
+        first_grasp_check = FirstGraspCheck()
+        wrist_corner_check = WristCornerCheck()
     execution_failure = None
     failure_context = None
+    exit_hold_receipt = None
     connection_report = None
     exit_grippers = None
     refill_recorder = None
@@ -441,8 +548,14 @@ def main() -> int:
                          capture_scope="Exact ACT refill inputs/chunks; dispatched targets may include SmolVLA arm corrections",
                          smol_inputs_captured=False), model_dir=args.act_model)
         refill_recorder.install()
+    telemetry = create_run(execute=args.execute, max_actions=args.max_actions,
+                             max_authority=args.max_authority)
     connected = False
     fpga_shadow = None
+    fpga_fold_observer = None
+    fpga_action_authority = None
+    authority_diagnostic_targets = []
+    fpga_feedback_clock = None
     smol_started = False
     smol_active = False
     handoff_cancelled = False
@@ -458,10 +571,15 @@ def main() -> int:
         flush=True,
     )
     try:
-        import os
+        if os.environ.get('AIPC_FPGA_AUTHORITY_CONFIG'):
+            from fpga_action_authority import FpgaActionAuthority
+            from fpga_feedback_age import FeedbackAgeClock
+            fpga_action_authority=FpgaActionAuthority.from_environment(args)
+            fpga_action_authority.start(countdown=args.countdown if args.execute else 0,stop_requested=lambda:stop)
+            fpga_action_authority.attach_telemetry()
+            fpga_feedback_clock=FeedbackAgeClock()
         if os.environ.get("AIPC_FPGA_SHADOW"):
             try:
-                import sys
                 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "npu_deploy"))
                 from fpga_live_shadow import from_environment
                 fpga_shadow = from_environment(max_actions=args.max_actions, handoff_step=args.handoff_step)
@@ -473,11 +591,15 @@ def main() -> int:
                     raise
         if stop:
             raise KeyboardInterrupt
-        connection_report = connect_holding_measured(robot, stop_requested=lambda: stop)
+        connection_report = connect_holding_measured(robot, stop_requested=lambda: stop,
+            before_enable=fpga_action_authority.validate_initial if fpga_action_authority is not None else None)
         connected = True
         obs = wrapper.get_observation()
         measured = positions(obs)
         previous = measured.copy()
+        if args.finish_check:
+            from towel_finish import TowelFinishCheck
+            finish_check = TowelFinishCheck(obs["middle"])
         import json
         ACT_START = np.asarray(json.loads(args.start_pose_file.read_text())["target"], dtype=np.float32)
         if ACT_START.shape != (14,) or not np.isfinite(ACT_START).all():
@@ -508,7 +630,7 @@ def main() -> int:
         smol_started = True
         # RTC remains paused until the handoff point.
 
-        if args.execute:
+        if args.execute and fpga_action_authority is None:
             for n in range(args.countdown, 0, -1):
                 print(f"Hybrid execution starts in {n}...", flush=True)
                 time.sleep(1)
@@ -517,32 +639,163 @@ def main() -> int:
             import json
             start_check = quality_monitor.check_start(wrapper.get_observation()["middle"])
             print("TOWEL_START_CHECK="+json.dumps(start_check), flush=True)
+        if os.environ.get("AIPC_FPGA_FOLD") and fpga_action_authority is None:
+            try:
+                if os.environ.get("AIPC_FPGA_SHADOW"):
+                    raise ValueError("AIPC_FPGA_SHADOW and AIPC_FPGA_FOLD cannot run together")
+                from fpga_feedback_age import FeedbackAgeClock
+                from fpga_fold_observer import FpgaFoldObserver
+                fpga_fold_observer = FpgaFoldObserver.from_environment(
+                    robot.cameras["middle"], args.quality_profile)
+                fpga_feedback_clock = FeedbackAgeClock()
+                fpga_fold_observer.start(
+                    fpga_fold_observer.guard_profile["start"],
+                    quality_monitor.baseline_area if quality_monitor is not None else None)
+                if os.environ.get("AIPC_FPGA_REQUIRE_START") == "1":
+                    fpga_fold_observer.wait_ready()
+                print("FPGA_FOLD_OBSERVER=enabled address="+
+                      str(fpga_fold_observer.address), flush=True)
+            except Exception as observer_error:
+                print("FPGA_FOLD_OBSERVER_START_ERROR="+repr(observer_error), flush=True)
+                if fpga_fold_observer is not None:
+                    fpga_fold_observer.close()
+                fpga_fold_observer = None
+                if os.environ.get("AIPC_FPGA_REQUIRE_START") == "1":
+                    raise
         completed_steps = 0
         act_pipeline_timings = []
         refill_timings = []
         trace_rows = []
         print(f"ACT_EXECUTION_CONFIG mode=saved_checkpoint chunk_size={act.config.chunk_size} "
-              f"n_action_steps={act.config.n_action_steps} coeff={act.config.temporal_ensemble_coeff}", flush=True)
+              f"n_action_steps={act.config.n_action_steps} coeff={act.config.temporal_ensemble_coeff} "
+              f"fp16={args.act_fp16} fused_backbone={fused_act_backbone}", flush=True)
         max_target_joint_step = max_tracking_error = 0.0
         execution_started = time.perf_counter()
+        retry_first_fold = (args.execute and fpga_action_authority is None
+                            and os.environ.get("AIPC_FIRST_FOLD_RETRY_HOLD") == "1")
+        retry_first_fold_step = max(300, args.handoff_step)
+        telemetry.state("running")
         for step in range(args.max_actions):
             if stop:
+                break
+            if fpga_action_authority is not None and fpga_action_authority.trial_finished(step):
+                termination_reason='commissioning_limit'
+                if fpga_action_authority.trial.plan['stop_mode'] in ('pl_veto','reply_loss'):
+                    failure_context=dict(step=step,stage='commissioning_fault',dispatched=False)
+                    def fault_feedback():
+                        fresh,timestamps,sampled_ns=wrapper.get_feedback_snapshot(timeout=fpga_action_authority.config['reply_budget_us']/1e6)
+                        return positions(fresh),fpga_feedback_clock.age_us(timestamps),sampled_ns
+                    fpga_action_authority.trial.inject_fault(fpga_action_authority,fault_feedback,time.perf_counter()-execution_started)
+                if fpga_action_authority.trial.plan['stop_mode']=='operator_stop':stop=True
+                print('FPGA_COMMISSIONING_LIMIT='+str(step),flush=True)
                 break
             tick = time.perf_counter()
             failure_context = dict(step=step, stage="observation", tick_monotonic_s=tick, dispatched=False)
             obs = wrapper.get_observation()
+            fpga_observation_elapsed = time.perf_counter()-execution_started
             measured = positions(obs)
             if quality_monitor is not None and quality_monitor.update(obs["middle"], tick-execution_started):
                 termination_reason = "visual_finish_candidate"
                 failure_context = None
                 print("TOWEL_VISUAL_STOP: compact, clear and stable; fold success still needs review", flush=True)
                 break
-            grippers_before_action = gripper_snapshot(robot) if args.trace_file is not None else None
+            check_first_grasp = (first_grasp_check is not None and not first_grasp_check.done
+                                 and not smol_active and (args.act_only or step < args.handoff_step))
+            grippers_before_action = (gripper_snapshot(robot)
+                                      if args.trace_file is not None or check_first_grasp or finish_check is not None
+                                      else None)
+            request_left_release = False
+            if finish_check is not None:
+                had_incomplete_landing = finish_check.landing.incomplete is not None
+                evidence = finish_from_camera(finish_check, robot.cameras["middle"], step,
+                                              measured, previous, grippers_before_action,
+                                              first_fold_retry=(retry_first_fold and first_grasp_miss is not None
+                                                                and step >= retry_first_fold_step))
+                if not had_incomplete_landing and finish_check.landing.incomplete is not None:
+                    print("FIRST_FOLD_LANDING_INCOMPLETE=" + json.dumps(finish_check.landing.incomplete), flush=True)
+                if evidence is not None:
+                    termination_reason = "fold_finish_observed"
+                    failure_context = None
+                    print("TOWEL_FINISH_OBSERVED=" + json.dumps(evidence), flush=True)
+                    break
+                if finish_check.retry.result is not None:
+                    termination_reason = "first_fold_retry"
+                    failure_context = None
+                    print("TOWEL_FIRST_FOLD_RETRY=" + json.dumps(finish_check.retry.result), flush=True)
+                    break
+                had_dual_hold = handover_check.dual_hold is not None
+                had_empty_regrasp = handover_check.right_empty is not None
+                had_unconfirmed_regrasp = handover_check.right_unconfirmed is not None
+                had_recovered_regrasp = handover_check.right_regrasp_recovered is not None
+                had_sweep_stall = handover_check.sweep_stalled is not None
+                request_left_release = handover_check.observe(
+                    time.perf_counter(), step, finish_check, previous, grippers_before_action,
+                    measured=measured, time_left_s=(args.max_actions-step)/args.fps,
+                )
+                if not had_dual_hold and handover_check.dual_hold is not None:
+                    print("FOLD_DUAL_HOLD=" + json.dumps(handover_check.dual_hold), flush=True)
+                if not had_empty_regrasp and handover_check.right_empty is not None:
+                    print("FOLD_RIGHT_REGRASP_EMPTY=" + json.dumps(handover_check.right_empty), flush=True)
+                if not had_unconfirmed_regrasp and handover_check.right_unconfirmed is not None:
+                    print("FOLD_RIGHT_REGRASP_UNCONFIRMED=" + json.dumps(handover_check.right_unconfirmed), flush=True)
+                if not had_recovered_regrasp and handover_check.right_regrasp_recovered is not None:
+                    print("FOLD_RIGHT_REGRASP_RECOVERED=" + json.dumps(handover_check.right_regrasp_recovered), flush=True)
+                if not had_sweep_stall and handover_check.sweep_stalled is not None:
+                    print("FOLD_SWEEP_STALLED=" + json.dumps(handover_check.sweep_stalled), flush=True)
+            if check_first_grasp:
+                for side, index in (("left", 6), ("right", 13)):
+                    if getattr(first_grasp_check, side).closed_at is not None or previous[index] < .015:
+                        continue
+                    camera = robot.cameras[side]
+                    with camera.frame_lock:
+                        rgb, frame_id, captured_s = camera.latest_frame, camera.latest_frame_id, camera.latest_timestamp
+                    if rgb is not None and captured_s is not None:
+                        notice = wrist_corner_check.update(
+                            side, rgb, frame_id, captured_s, time.perf_counter(), step,
+                            previous[index], grippers_before_action.get(side, {}),
+                        )
+                        if notice is not None:
+                            print("FIRST_GRASP_INSIDE_EDGE=" + json.dumps(dict(side=side, **notice)), flush=True)
+                unloaded = first_grasp_check.update(tick, previous, grippers_before_action)
+                for side, evidence in first_grasp_check.load_drops.items():
+                    if side not in first_grasp_load_drops:
+                        first_grasp_load_drops[side] = dict(step=step, **evidence)
+                        notice = dict(side=side, **first_grasp_load_drops[side])
+                        print("FIRST_GRASP_LOAD_DROP=" + json.dumps(notice), flush=True)
+                        print("首抓已记录夹持负载，随后力矩降低，保留录像供确认。", flush=True)
+                if unloaded:
+                    if first_grasp_miss is None:
+                        first_grasp_miss = dict(step=step, sides={})
+                    for side, evidence in unloaded.items():
+                        first_grasp_miss['sides'][side] = dict(step=step, **evidence)
+                    print("FIRST_GRASP_MISS=" + json.dumps(dict(step=step, sides=unloaded)), flush=True)
+                    print("首抓疑似空夹，已记录反馈，继续折叠流程。", flush=True)
 
             act_frame = build_dataset_frame(act_features, obs, prefix="observation")
             act_queue = getattr(act, "_action_queue", None)
-            act_refill = None if act_queue is None else len(act_queue) == 0
             act_tick = time.perf_counter()
+            accepted_release = False
+            if (handover_recovery_enabled and request_left_release and act_queue and not smol_active
+                    and (args.act_only or step + BRIDGE_STEPS < args.handoff_step)
+                    and max_parts(np.abs(measured - previous))[0] < .08):
+                with torch.inference_mode(), torch.autocast(device_type=device.type):
+                    pending = act_post(torch.stack(tuple(act_queue), dim=1))[0].float().cpu().numpy()
+                    shape = finish_check.geometry(obs["middle"])
+                    if longest_open(pending[:, 6]) >= 8 or not suitable_fold_view(shape, finish_check.initial):
+                        handover_check.record_probe(act_tick, step, False, None)
+                    else:
+                        inputs = prepare_observation_for_inference(dict(act_frame), device, args.task, robot.robot_type)
+                        normalized = act.predict_action_chunk(act_pre(inputs))[:, :act.config.n_action_steps]
+                        physical = act_post(normalized)[0].float().cpu().numpy()
+                        accepted_release = usable_recovery(physical, previous, LOWER, UPPER,
+                                                           args.global_lowpass_alpha, args.fps)
+                        peak_mm = float(np.max(physical[:, 6]) * 1000) if np.isfinite(physical).all() else None
+                        handover_check.record_probe(act_tick, step, accepted_release, peak_mm)
+                        if accepted_release:
+                            act_queue.clear()
+                            act_queue.extend(normalized.transpose(0, 1))
+                print("FOLD_LEFT_RELEASE_PROBE=" + json.dumps(handover_check.probes[-1]), flush=True)
+            act_refill = None if act_queue is None else not act_queue or accepted_release
             if args.capture_refills is not None:
                 refill_recorder.before_get_action(step, act_refill, act_frame, tick_s=tick,
                     previous=previous, cameras=robot.cameras)
@@ -556,6 +809,12 @@ def main() -> int:
             if act_tensor is None:
                 raise RuntimeError("guard returned no action")
             act_action = as_action(act_tensor, project_soft_limits=False)
+            act_before_projection = act_action.copy()
+            if fpga_action_authority is not None:
+                # Reuse the existing <=0.02 rad joint-only projection. Targets
+                # remain inside the unchanged CPU/PL bounds; larger violations
+                # still reach the original strict validator and are rejected.
+                act_action = as_action(act_tensor, project_soft_limits=True, projection_label='ACT')
             failure_context.update(stage="blend_or_ACT_base_validation", measured=measured.tolist(),
                                    previous=previous.tolist(), act_action=act_action.tolist())
             import os
@@ -633,9 +892,17 @@ def main() -> int:
             raw_target[GRIPPER] = act_action[GRIPPER]
 
             # Final global smoothing; re-assert ACT gripper (no lag on gripper).
+            adapting_grasp = (grasp_approach is not None and not smol_active
+                              and (args.act_only or step < args.handoff_step))
+            smoothing_base = (grasp_approach.previous_base if adapting_grasp
+                              and grasp_approach.previous_base is not None else previous)
             target = apply_global_smoothing(
-                raw_target, previous, act_action[GRIPPER], args.global_lowpass_alpha
+                raw_target, smoothing_base, act_action[GRIPPER], args.global_lowpass_alpha
             )
+            if adapting_grasp:
+                target = grasp_approach.apply(target)
+            if handover_check is not None:
+                target = handover_check.apply_bridge(target, previous)
 
             failure_context.update(stage="final_validation", target=target.tolist(),
                                    correction=correction.tolist(), source=source)
@@ -643,7 +910,8 @@ def main() -> int:
             # The command carries a SmolVLA correction (even a decaying one), so
             # validate it in the strict blended mode; pure-ACT ticks keep the
             # proven trusted-ACT semantics exactly.
-            blended = float(np.max(np.abs(correction[ARM]))) > 1e-4
+            max_correction_rad = float(np.max(np.abs(correction[ARM])))
+            blended = max_correction_rad > 1e-4
             joint_step, grip_step, tracking, grip_tracking = validate_execution(
                 target,
                 measured,
@@ -658,10 +926,45 @@ def main() -> int:
             if stop:
                 failure_context = None
                 break
-            if args.execute:
-                failure_context["stage"] = "dispatch"
-                wrapper.send_action(action_dict(target))
-                failure_context["dispatched"] = True
+            if args.execute or fpga_action_authority is not None:
+                if fpga_action_authority is not None:
+                    from host.action_authority import AuthorityDenied
+                    from fpga_action_authority import dispatch_policy_target,policy_target_dispatch
+                    failure_context['stage']='fpga_authority'
+                    # Inference can consume most of a tick: re-read and re-check
+                    # feedback instead of authorizing against a stale snapshot.
+                    def authority_feedback():
+                        fresh_observation,timestamps,sampled_ns=wrapper.get_feedback_snapshot(
+                            timeout=fpga_action_authority.config['reply_budget_us']/1e6)
+                        fresh=positions(fresh_observation)
+                        age=fpga_feedback_clock.age_us(timestamps)
+                        return fresh,age,sampled_ns
+                    try:
+                        dispatch_deadline_ns=time.perf_counter_ns()+fpga_action_authority.config['reply_budget_us']*1000
+                        dispatch_policy_target(fpga_action_authority,step=step,elapsed_s=time.perf_counter()-execution_started,
+                            target=target,previous=previous,act=act_action,
+                            correction=correction,previous_correction=previous_correction,blended=blended,
+                            feedback_reader=authority_feedback,
+                            cpu_validator=lambda fresh:validate_execution(target,fresh,previous,args,trusted_act=not blended,
+                                correction=correction if blended else None,
+                                previous_correction=previous_correction if blended else None),
+                            queue_depth=smol_engine.action_queue.qsize() if smol_engine.action_queue is not None else 0,
+                            dispatch=policy_target_dispatch(args.execute,
+                                lambda frozen:wrapper.send_action_before(action_dict(frozen),dispatch_deadline_ns,
+                                    stop_requested=lambda:stop),authority_diagnostic_targets),
+                            stop_requested=lambda:stop)
+                    except AuthorityDenied as denied:
+                        failure_context['authority']=denied.record
+                        if stop and denied.reason=='stop_requested':
+                            failure_context=None;break
+                        raise
+                    failure_context['authority']=dict(fpga_action_authority.gate.records[-1])
+                else:
+                    failure_context["stage"] = "dispatch"
+                    wrapper.send_action(action_dict(target))
+                failure_context["dispatched"] = bool(args.execute)
+            telemetry.tick(step=step, authority=authority, max_correction_rad=max_correction_rad,
+                           source=source, dispatched=bool(args.execute))
             if fpga_shadow is not None:
                 try:
                     fpga_shadow.submit(step=step, elapsed=tick-execution_started,
@@ -670,11 +973,22 @@ def main() -> int:
                         blended=blended, dispatched=bool(args.execute))
                 except Exception as shadow_error:
                     print("FPGA_SHADOW_ERROR="+repr(shadow_error), flush=True)
+            if fpga_fold_observer is not None:
+                try:
+                    age_us = fpga_feedback_clock.age_us(robot.last_feedback_timestamps)
+                    fpga_fold_observer.submit(step=step, elapsed_s=fpga_observation_elapsed,
+                        target=target, measured=measured, previous=previous, act=act_action,
+                        correction=correction, previous_correction=previous_correction,
+                        blended=blended, feedback_age_us=age_us, dispatched=bool(args.execute),
+                        queue_depth=(smol_engine.action_queue.qsize()
+                                     if smol_engine.action_queue is not None else 0))
+                except Exception as observer_error:
+                    print("FPGA_FOLD_OBSERVER_SUBMIT_ERROR="+repr(observer_error), flush=True)
             if args.capture_refills is not None:
                 refill_recorder.after_dispatch(step, act_action, target, measured, previous,
                     tick_s=tick, returned_s=time.perf_counter(), grippers=grippers_before_action, dispatched=args.execute)
             if args.trace_file is not None:
-                trace_rows.append(dict(step=step, tick_monotonic_s=tick, act_done_monotonic_s=act_tick+act_pipeline_s, dispatch_done_monotonic_s=time.perf_counter(), act_refill=act_refill, act_pipeline_s=act_pipeline_s, source=source, detail=detail, gripper_feedback_before_action=grippers_before_action, authority=authority, measured=measured.tolist(), previous=previous.tolist(), act_action=act_action.tolist(), smol_candidate=(raw_candidate.tolist() if raw_candidate is not None else None), proposed_correction=proposed_correction.tolist(), correction=correction.tolist(), target=target.tolist()))
+                trace_rows.append(dict(step=step, tick_monotonic_s=tick, act_done_monotonic_s=act_tick+act_pipeline_s, dispatch_done_monotonic_s=time.perf_counter(), act_refill=act_refill, act_pipeline_s=act_pipeline_s, source=source, detail=detail, gripper_feedback_before_action=grippers_before_action, authority=authority, measured=measured.tolist(), previous=previous.tolist(), act_action=act_action.tolist(), act_before_projection=act_before_projection.tolist(), smol_candidate=(raw_candidate.tolist() if raw_candidate is not None else None), proposed_correction=proposed_correction.tolist(), correction=correction.tolist(), target=target.tolist()))
             max_target_joint_step = max(max_target_joint_step, joint_step)
             max_tracking_error = max(max_tracking_error, tracking)
             previous = target
@@ -694,9 +1008,31 @@ def main() -> int:
                 time.sleep(period - elapsed)
 
         if connected and args.execute:
-            hold = positions(wrapper.get_observation())
-            wrapper.send_action(action_dict(hold))
-            print("Current measured pose is held.", flush=True)
+            if fpga_action_authority is not None:fpga_action_authority.exiting('stop_requested' if stop else '')
+            if fpga_action_authority is not None:
+                from policy_exit import hold_current
+                exit_hold_receipt=hold_current(wrapper,positions,action_dict,lambda:gripper_snapshot(robot),
+                    budget_us=fpga_action_authority.config['reply_budget_us'],feedback_limit_us=fpga_action_authority.config['feedback_limit_us'])
+                print('POLICY_EXIT_HOLD='+json.dumps(exit_hold_receipt),flush=True)
+                if not exit_hold_receipt['command_returned']:raise RuntimeError('Native exit hold did not return; physical hold unconfirmed')
+            else:
+                hold = positions(wrapper.get_observation())
+                wrapper.send_action(action_dict(hold))
+                print("Current measured pose is held.", flush=True)
+                budget_reached = (finish_check is not None and termination_reason == "action_budget"
+                                  and completed_steps == args.max_actions)
+                if budget_reached and not stop:
+                    evidence = confirm_finish_while_held(finish_check, wrapper, robot, hold,
+                                                         completed_steps, lambda: stop)
+                    if evidence is not None:
+                        termination_reason = "fold_finish_observed"
+                        print("TOWEL_FINISH_OBSERVED=" + json.dumps(evidence), flush=True)
+                if not stop and termination_reason == "fold_finish_observed":
+                    print("TOWEL_FINISH_HOLD", flush=True)
+                elif not stop and termination_reason == "first_fold_retry":
+                    print("TOWEL_FIRST_FOLD_HOLD", flush=True)
+                elif budget_reached and not stop:
+                    print("TOWEL_BUDGET_HOLD", flush=True)
         elapsed_run = time.perf_counter() - execution_started
         print(f"COBOT_RUN_SUMMARY steps={completed_steps}/{args.max_actions} manual_stop={stop} "
               f"elapsed_s={elapsed_run:.3f} mean_hz={completed_steps/max(elapsed_run,1e-9):.3f} execute={args.execute}", flush=True)
@@ -716,16 +1052,36 @@ def main() -> int:
         execution_failure = dict(error=type(execution_error).__name__+": "+str(execution_error), context=failure_context)
         termination_reason = "error"
         if connected and args.execute:
+            if fpga_action_authority is not None:fpga_action_authority.exiting((fpga_action_authority.gate.fault if fpga_action_authority.gate else None) or 'control_error')
             try:
-                hold = positions(wrapper.get_observation())
-                wrapper.send_action(action_dict(hold))
-                print("Safety exit: current measured pose is held.", flush=True)
+                if fpga_action_authority is not None:
+                    if exit_hold_receipt is None:
+                        from policy_exit import hold_current
+                        exit_hold_receipt=hold_current(wrapper,positions,action_dict,lambda:gripper_snapshot(robot),
+                            budget_us=fpga_action_authority.config['reply_budget_us'],feedback_limit_us=fpga_action_authority.config['feedback_limit_us'])
+                        print('POLICY_EXIT_HOLD='+json.dumps(exit_hold_receipt),flush=True)
+                else:
+                    hold = positions(wrapper.get_observation())
+                    wrapper.send_action(action_dict(hold))
+                    print("Safety exit: current measured pose is held.", flush=True)
             except Exception as exc:
                 print(f"WARNING: hold failed: {exc}", flush=True)
         raise
     finally:
+        failed = sys.exc_info()[0] is not None
+        telemetry.state("error" if failed else ("stopped" if stop else "finished"))
         original_cleanup_completed = False
         try:
+            if fpga_action_authority is not None:
+                fpga_action_authority.close(outcome='error' if failed else 'stopped' if stop else 'ended')
+                if not args.execute:
+                    import json
+                    print('FPGA_AUTHORITY_READONLY='+json.dumps(dict(
+                        session=fpga_action_authority.client.session,
+                        memory_receipts=len(authority_diagnostic_targets),robot_motion_commands_sent=False,
+                        full_controller_load_measured=False,eligible_for_policy_execution=False)),flush=True)
+            if fpga_fold_observer is not None:
+                fpga_fold_observer.close(outcome='error' if failed else 'stopped' if stop else 'ended')
             if smol_started:
                 smol_engine.stop()
             act_engine.stop()
@@ -738,7 +1094,32 @@ def main() -> int:
                 import json
                 try:
                     args.trace_file.parent.mkdir(parents=True, exist_ok=True)
-                    args.trace_file.write_text(json.dumps(dict(act_model=str(args.act_model), smol_model=str(args.smol_model), execute=args.execute, fps=args.fps, timestamp_basis="local time.perf_counter", policy_connection=connection_report, gripper_exit=exit_grippers, image_adapters=dict(act=getattr(act_pre, "image_adaptation", None), smol=getattr(smol_pre, "image_adaptation", None)), termination_reason=("manual_stop" if stop else termination_reason), execution_failure=execution_failure, quality_monitor=(quality_monitor.report() if quality_monitor is not None else None), rows=locals().get("trace_rows", [])), allow_nan=False), encoding="utf-8")
+                    trace = dict(
+                        act_model=str(args.act_model), smol_model=str(args.smol_model),
+                        execute=args.execute, fps=args.fps, timestamp_basis="local time.perf_counter",
+                        policy_connection=connection_report, gripper_exit=exit_grippers,
+                        image_adapters=dict(act=getattr(act_pre, "image_adaptation", None),
+                                            smol=getattr(smol_pre, "image_adaptation", None)),
+                        termination_reason="manual_stop" if stop else termination_reason,
+                        execution_failure=execution_failure, first_grasp_miss=first_grasp_miss,
+                        first_grasp_load_drops=first_grasp_load_drops,
+                        first_grasp_inside_edge=wrist_corner_check.evidence if wrist_corner_check is not None else {},
+                        fold_handover=(dict(dual_hold=handover_check.dual_hold, right_empty=handover_check.right_empty,
+                                            right_unconfirmed=handover_check.right_unconfirmed,
+                                            right_regrasp_recovered=handover_check.right_regrasp_recovered,
+                                            sweep_stalled=handover_check.sweep_stalled,
+                                            release_probes=handover_check.probes) if handover_check is not None else None),
+                        exit_hold=exit_hold_receipt, rows=locals().get("trace_rows", []),
+                        quality_monitor=quality_monitor.report() if quality_monitor is not None else None,
+                        finish_check=finish_check.report() if finish_check is not None else None,
+                        act_fp16=args.act_fp16, fused_act_backbone=fused_act_backbone,
+                        first_grasp_approach_ticks=grasp_approach.applied_ticks if grasp_approach is not None else None,
+                        authority_run=(str(Path(fpga_action_authority.log.name).parent)
+                                       if fpga_action_authority is not None else None),
+                        commissioning=(fpga_action_authority.trial.plan if fpga_action_authority is not None
+                                       and fpga_action_authority.trial is not None else None),
+                    )
+                    args.trace_file.write_text(json.dumps(trace, allow_nan=False), encoding="utf-8")
                     print("COBOT_TRACE="+str(args.trace_file), flush=True)
                 except Exception as trace_error:
                     print("WARNING: trace write failed after shutdown: "+str(trace_error), flush=True)

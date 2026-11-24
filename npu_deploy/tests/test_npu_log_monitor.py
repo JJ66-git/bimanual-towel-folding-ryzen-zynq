@@ -18,6 +18,11 @@ class MonitorTests(unittest.TestCase):
     def test_real_npu_partition(self):
         self.assertTrue(self.run_monitor(b'[Vitis AI EP] NPU 491\nActually running on NPU      1\n'))
 
+    def test_cached_session_requires_executed_npu_profile(self):
+        self.assertTrue(self.run_monitor(b'NPU_EXECUTION_CONFIRMED provider=VitisAIExecutionProvider kernels=1 profile=proof.json\n'))
+        self.assertFalse(self.run_monitor(b'NPU_EXECUTION_CONFIRMED provider=CPUExecutionProvider kernels=1\n'))
+        self.assertFalse(self.run_monitor(b'NPU_EXECUTION_CONFIRMED provider=VitisAIExecutionProvider kernels=0\n'))
+
     def test_cpu_fallback_or_zero_not_accepted(self):
         self.assertFalse(self.run_monitor(b'[Vitis AI EP] CPU 491\nActually running on NPU      0\n'))
         self.assertFalse(self.run_monitor(b'Execution provider registered\n'))

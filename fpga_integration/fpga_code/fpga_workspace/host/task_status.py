@@ -12,7 +12,8 @@ import zlib
 HEADER = struct.Struct('<4sBBHIIQ')
 CRC = struct.Struct('<I')
 MAGIC = b'FUI1'
-PHASES = ('UNKNOWN','WAITING','GRASPING','GRASPED','FOLD_1','FOLD_2','COMPLETE')
+RESET_PHASES = ('RESETTING','RESET_DONE','RESET_FAILED','RESET_STOPPED')
+PHASES = ('UNKNOWN','WAITING','GRASPING','GRASPED','FOLD_1','FOLD_2','COMPLETE','ENDED','FAILED','STOPPED') + RESET_PHASES
 ACTIVITIES = ('IDLE','THINKING','EXECUTING','PAUSED','ERROR')
 ORIGINS = ('HOST','OPERATOR')
 
@@ -58,13 +59,15 @@ def unpack(packet):
 
 
 class Client:
-    def __init__(self,address,timeout=1.0):
+    def __init__(self,address,timeout=1.0,session=None):
         if not math.isfinite(timeout) or timeout<=0:
             raise ValueError('timeout must be finite and positive')
         self.socket=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.socket.connect(address)
         self.timeout=timeout
-        self.session=secrets.randbits(32)
+        if session is not None and (type(session) is not int or not 1<=session<=0xFFFFFFFE):
+            self.socket.close();raise ValueError('invalid task session')
+        self.session=secrets.randbelow(0xFFFFFFFE)+1 if session is None else session
         self.sequence=0
         self.tick=-1
 
@@ -89,6 +92,23 @@ class Client:
 
     def close(self):
         self.socket.close()
+
+
+class ResetClaims:
+    """Separate display lease: never changes FPG ownership or a motion permit."""
+    def __init__(self):
+        self.owner=None;self.sequence=-1;self.tick=-1;self.last=0.;self.terminal=False
+
+    def accept(self,identity,sequence,tick,values,address,now,*,task_active=False):
+        owner=(address,identity)
+        if values['phase'] not in RESET_PHASES or values['origin']!='HOST':raise ValueError('invalid_reset_claim')
+        if task_active:raise ValueError('reset_display_task_active')
+        if owner!=self.owner:
+            if self.owner is not None and not self.terminal and now-self.last<5:raise ValueError('reset_display_lease_active')
+            if sequence!=0 or values['phase']!='RESETTING':raise ValueError('reset_display_start_required')
+        elif sequence<=self.sequence or tick<=self.tick or self.terminal:raise ValueError('old_reset_status')
+        self.owner=owner;self.sequence=sequence;self.tick=tick;self.last=now
+        self.terminal=values['phase']!='RESETTING'
 
 
 def main():

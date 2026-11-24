@@ -4,6 +4,7 @@ import os
 import select
 import struct
 import subprocess
+import sysconfig
 import threading
 import time
 import re
@@ -61,7 +62,8 @@ class NpuLogMonitor:
                 line = self.pipe.readline()
                 if not line:
                     break
-                if re.search(rb'Actually running on NPU\s+[1-9][0-9]*', line):
+                if (re.search(rb'Actually running on NPU\s+[1-9][0-9]*', line)
+                        or re.search(rb'^NPU_EXECUTION_CONFIRMED provider=VitisAIExecutionProvider kernels=[1-9][0-9]*\b', line)):
                     self.partition_seen.set()
                 try:
                     os.write(self.sink_fd, line)
@@ -82,7 +84,7 @@ class VisionClient:
         env = os.environ.copy()
         for key in ('PYTHONPATH', 'PYTHONHOME', 'LD_PRELOAD', 'GLIBC_TUNABLES'):
             env.pop(key, None)
-        libs = ['/opt/xilinx/xrt/lib', str(ROOT/'amd_hybrid_deploy_20261031/.tooling/python/cpython-3.12.16-linux-x86_64-gnu/lib'),
+        libs = ['/opt/xilinx/xrt/lib', sysconfig.get_config_var('LIBDIR') or '/lib/x86_64-linux-gnu',
                 '/lib/x86_64-linux-gnu', str(SDK/'onnxruntime/lib'),
                 str(SITE/'flexml/flexml_extras/lib'), str(SITE/'onnxruntime/capi'), str(SITE/'voe/lib')]
         env.update(RYZEN_AI_INSTALLATION_PATH=str(SDK), XILINX_XRT='/opt/xilinx/xrt',

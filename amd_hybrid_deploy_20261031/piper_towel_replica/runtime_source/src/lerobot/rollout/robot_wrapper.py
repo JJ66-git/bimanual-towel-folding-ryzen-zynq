@@ -18,8 +18,16 @@ from __future__ import annotations
 
 from threading import Lock
 from typing import Any
+import time
 
 from lerobot.robots import Robot
+
+
+class DispatchNotStarted(RuntimeError):
+    command_sent = False
+    def __init__(self, reason):
+        self.reason = reason
+        super().__init__(reason)
 
 
 class ThreadSafeRobot:
@@ -46,6 +54,31 @@ class ThreadSafeRobot:
     def send_action(self, action: dict[str, Any] | Any) -> Any:
         with self._lock:
             return self._robot.send_action(action)
+
+    def get_feedback_snapshot(self, timeout: float):
+        """Bound lock acquisition; return motor values and their paired SDK ages.
+
+        No camera reads or actuator commands. The caller checks the whole
+        freshness-to-dispatch deadline after this cache read returns too.
+        """
+        if timeout <= 0 or not self._lock.acquire(timeout=timeout):
+            raise TimeoutError('Feedback lock did not become available within the authority window')
+        try:
+            observation=self._robot.get_motor_observation()
+            timestamps=self._robot.last_feedback_timestamps
+            return observation,timestamps,time.perf_counter_ns()
+        finally:self._lock.release()
+
+    def send_action_before(self, action, deadline_ns, stop_requested=lambda: False):
+        """Apply the same deadline after acquiring the actual dispatch lock."""
+        remaining=(deadline_ns-time.perf_counter_ns())/1e9
+        if remaining<=0 or not self._lock.acquire(timeout=remaining):
+            raise DispatchNotStarted('dispatch_deadline')
+        try:
+            if time.perf_counter_ns()>=deadline_ns:raise DispatchNotStarted('dispatch_deadline')
+            if stop_requested():raise DispatchNotStarted('stop_requested')
+            return self._robot.send_action(action)
+        finally:self._lock.release()
 
     # -- Read-only proxies (no lock needed) -----------------------------------
 

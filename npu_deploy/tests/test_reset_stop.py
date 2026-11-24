@@ -82,10 +82,41 @@ class ResetStopTests(unittest.TestCase):
             reset.request_stop()
             return np.zeros(14)
         with patch.object(reset, 'read_positions', side_effect=read_and_stop), \
+             patch.object(reset, 'require_joint_communication'), \
              patch.object(reset, 'arm_is_enabled', return_value=True), \
              patch.object(reset, 'send_pose') as send:
             reset.move_slowly(self.robot, np.zeros(14), np.ones(14)*.01, args)
         send.assert_not_called()
+
+    def test_joint_communication_error_blocks_targets_and_enable(self):
+        import numpy as np
+        for arm_status, err_code in ((5, 0), (0, 0x3f)):
+            status = SimpleNamespace(time_stamp=123, arm_status=SimpleNamespace(arm_status=arm_status, err_code=err_code))
+            bus = SimpleNamespace(piper=SimpleNamespace(GetArmStatus=lambda:status, EnablePiper=MagicMock()), write=MagicMock())
+            robot = SimpleNamespace(left_bus=bus, right_bus=bus)
+            with self.assertRaisesRegex(RuntimeError, 'internal joint communication fault'):
+                reset.send_pose(robot, np.zeros(14))
+            bus.write.assert_not_called()
+            with self.assertRaisesRegex(RuntimeError, 'internal joint communication fault'):
+                reset.enable_both_holding(robot, np.zeros(14))
+            bus.piper.EnablePiper.assert_not_called()
+
+    def test_communication_fault_precedes_tracking_error_and_next_target(self):
+        import numpy as np
+        status = SimpleNamespace(time_stamp=123, arm_status=SimpleNamespace(arm_status=5, err_code=0x3f))
+        bus = SimpleNamespace(piper=SimpleNamespace(GetArmStatus=lambda:status), write=MagicMock())
+        robot = SimpleNamespace(left_bus=bus, right_bus=bus)
+        args = SimpleNamespace(fps=30, joint_speed=.06, gripper_speed=.006)
+        with patch.object(reset, 'read_positions', return_value=np.ones(14)), \
+             patch.object(reset, 'send_pose') as send:
+            with self.assertRaisesRegex(RuntimeError, 'internal joint communication fault'):
+                reset.move_slowly(robot, np.zeros(14), np.ones(14), args)
+        send.assert_not_called()
+
+    def test_normal_motion_status_does_not_become_a_communication_fault(self):
+        status = SimpleNamespace(time_stamp=123, arm_status=SimpleNamespace(arm_status=0, err_code=0))
+        bus = SimpleNamespace(piper=SimpleNamespace(GetArmStatus=lambda:status))
+        self.assertIsNone(reset.joint_communication_fault(bus))
 
     def test_normal_completion_emits_marker(self):
         status, out, sends, holds = self.invoke('MOVE')

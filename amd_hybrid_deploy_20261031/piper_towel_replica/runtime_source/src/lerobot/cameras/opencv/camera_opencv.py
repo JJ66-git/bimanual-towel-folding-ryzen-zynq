@@ -115,6 +115,8 @@ class OpenCVCamera(Camera):
         self.frame_lock: Lock = Lock()
         self.latest_frame: NDArray[Any] | None = None
         self.latest_timestamp: float | None = None
+        self.latest_frame_id = 0
+        self.latest_ready_monotonic_us = None
         self.new_frame_event: Event = Event()
 
         self.rotation: int | None = get_cv2_rotation(config.rotation)
@@ -476,6 +478,8 @@ class OpenCVCamera(Camera):
                 with self.frame_lock:
                     self.latest_frame = processed_frame
                     self.latest_timestamp = capture_time
+                    self.latest_frame_id += 1
+                    self.latest_ready_monotonic_us = time.monotonic_ns() // 1000
                 self.new_frame_event.set()
                 failure_count = 0
 

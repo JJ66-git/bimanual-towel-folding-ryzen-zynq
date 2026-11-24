@@ -65,6 +65,7 @@ class ACTPolicy(PreTrainedPolicy):
         self.config = config
 
         self.model = ACT(config)
+        self.on_action_refill: Callable[[Tensor], None] | None = None
 
         if config.temporal_ensemble_coeff is not None:
             self.temporal_ensembler = ACTTemporalEnsembler(config.temporal_ensemble_coeff, config.chunk_size)
@@ -117,7 +118,10 @@ class ACTPolicy(PreTrainedPolicy):
         # Action queue logic for n_action_steps > 1. When the action_queue is depleted, populate it by
         # querying the policy.
         if len(self._action_queue) == 0:
-            actions = self.predict_action_chunk(batch)[:, : self.config.n_action_steps]
+            actions = self.predict_action_chunk(batch)
+            if self.on_action_refill is not None:
+                self.on_action_refill(actions)
+            actions = actions[:, : self.config.n_action_steps]
 
             # `self.model.forward` returns a (batch_size, n_action_steps, action_dim) tensor, but the queue
             # effectively has shape (n_action_steps, batch_size, *), hence the transpose.
@@ -324,6 +328,7 @@ class ACT(nn.Module):
             )
 
         # Backbone for image feature extraction.
+        self.batch_camera_backbone = False
         if self.config.image_features:
             backbone_model = getattr(torchvision.models, config.vision_backbone)(
                 replace_stride_with_dilation=[False, False, config.replace_final_stride_with_dilation],
@@ -473,8 +478,17 @@ class ACT(nn.Module):
             # For a list of images, the H and W may vary but H*W is constant.
             # NOTE: If modifying this section, verify on MPS devices that
             # gradients remain stable (no explosions or NaNs).
-            for img in batch[OBS_IMAGES]:
-                cam_features = self.backbone(img)["feature_map"]
+            images = batch[OBS_IMAGES]
+            if (
+                self.batch_camera_backbone
+                and not self.training
+                and len(images) > 1
+                and all(image.shape == images[0].shape for image in images[1:])
+            ):
+                features = self.backbone(torch.cat(images, dim=0))["feature_map"].split(batch_size)
+            else:
+                features = (self.backbone(image)["feature_map"] for image in images)
+            for cam_features in features:
                 cam_pos_embed = self.encoder_cam_feat_pos_embed(cam_features).to(dtype=cam_features.dtype)
                 cam_features = self.encoder_img_feat_input_proj(cam_features)
 
