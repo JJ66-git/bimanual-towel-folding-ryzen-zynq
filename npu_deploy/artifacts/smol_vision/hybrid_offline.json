@@ -1,0 +1,2127 @@
+{
+  "qualification": "One fixed observation, idealized previous command as feedback, no asynchronous queue or hardware. Not closed-loop validation.",
+  "fixture": "/home/ysyx/FPGA_competition/bimanual-towel-folding-ryzen-zynq/npu_deploy/artifacts/synthetic_preflight/observation.json",
+  "fixture_note": "SYNTHETIC",
+  "npu_loader": "hybrid_entry.NpuSmolLoader",
+  "steps_requested": 20,
+  "act_inference_s": 0.3402015419997042,
+  "npu_startup_s": 4.785936307998782,
+  "native_guided_s": 1.0210177059998387,
+  "npu_guided_s": 0.6470173960005923,
+  "resource_cpu_quota": "2400%",
+  "resource_memory_max": "22G",
+  "stability_repeats": 100,
+  "stability": [
+    {
+      "iteration": 1,
+      "npu_guided_s": 0.6452853269984189,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 2,
+      "npu_guided_s": 0.6552288899983978,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 3,
+      "npu_guided_s": 0.6545839749996958,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 4,
+      "npu_guided_s": 0.6471142189984675,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 5,
+      "npu_guided_s": 0.6572008470011497,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 6,
+      "npu_guided_s": 0.6542176880011539,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 7,
+      "npu_guided_s": 0.6479791789988667,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 8,
+      "npu_guided_s": 0.6479832459990575,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 9,
+      "npu_guided_s": 0.6599621099994692,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 10,
+      "npu_guided_s": 0.6541516360011883,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 11,
+      "npu_guided_s": 0.6502211590013758,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 12,
+      "npu_guided_s": 0.6512986340003408,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 13,
+      "npu_guided_s": 0.6501859029995103,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 14,
+      "npu_guided_s": 0.6479567140013387,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 15,
+      "npu_guided_s": 0.6610082250008418,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 16,
+      "npu_guided_s": 0.6513573190004536,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 17,
+      "npu_guided_s": 0.646968848999677,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 18,
+      "npu_guided_s": 0.6492728419998457,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 19,
+      "npu_guided_s": 0.6502429530009977,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 20,
+      "npu_guided_s": 0.6471054749999894,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 21,
+      "npu_guided_s": 0.665707136000492,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 22,
+      "npu_guided_s": 0.6530012509992957,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 23,
+      "npu_guided_s": 0.6502099320005073,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 24,
+      "npu_guided_s": 0.6516411900011008,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 25,
+      "npu_guided_s": 0.6484295869995549,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 26,
+      "npu_guided_s": 0.6499274569996487,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 27,
+      "npu_guided_s": 0.6564427480006998,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 28,
+      "npu_guided_s": 0.6527709189995221,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 29,
+      "npu_guided_s": 0.6525021409997862,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 30,
+      "npu_guided_s": 0.6539507399993454,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 31,
+      "npu_guided_s": 0.6468396569998731,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 32,
+      "npu_guided_s": 0.64574471800006,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 33,
+      "npu_guided_s": 0.6552797029999056,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 34,
+      "npu_guided_s": 0.6587884450000274,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 35,
+      "npu_guided_s": 0.6508192719993531,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 36,
+      "npu_guided_s": 0.6596944779994374,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 37,
+      "npu_guided_s": 0.6479822389992478,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 38,
+      "npu_guided_s": 0.6475490510001691,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 39,
+      "npu_guided_s": 0.6637182140002551,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 40,
+      "npu_guided_s": 0.6524967450004624,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 41,
+      "npu_guided_s": 0.6509559370006173,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 42,
+      "npu_guided_s": 0.6535821050001687,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 43,
+      "npu_guided_s": 0.649415677999059,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 44,
+      "npu_guided_s": 0.6500811570003862,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 45,
+      "npu_guided_s": 0.6527401540006394,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 46,
+      "npu_guided_s": 0.6671355369999219,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 47,
+      "npu_guided_s": 0.6538918350015592,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 48,
+      "npu_guided_s": 0.6489670310002111,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 49,
+      "npu_guided_s": 0.6500401499997679,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 50,
+      "npu_guided_s": 0.6493513679997704,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 51,
+      "npu_guided_s": 0.647571315001187,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 52,
+      "npu_guided_s": 0.6554242160000285,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 53,
+      "npu_guided_s": 0.6566062410001905,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 54,
+      "npu_guided_s": 0.653817866999816,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 55,
+      "npu_guided_s": 0.6493680459989264,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 56,
+      "npu_guided_s": 0.6477734689997305,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 57,
+      "npu_guided_s": 0.6484815750009147,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 58,
+      "npu_guided_s": 0.6569432019987289,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 59,
+      "npu_guided_s": 0.6607279139989259,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 60,
+      "npu_guided_s": 0.6510174790000747,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 61,
+      "npu_guided_s": 0.6509728180008096,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 62,
+      "npu_guided_s": 0.6480241919998662,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 63,
+      "npu_guided_s": 0.6563518439998006,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 64,
+      "npu_guided_s": 0.6592817950004246,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 65,
+      "npu_guided_s": 0.6573959599991213,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 66,
+      "npu_guided_s": 0.6517046640001354,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 67,
+      "npu_guided_s": 0.6538843520011142,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 68,
+      "npu_guided_s": 0.6499246300008963,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 69,
+      "npu_guided_s": 0.64975575400058,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 70,
+      "npu_guided_s": 0.6558169700001599,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 71,
+      "npu_guided_s": 0.6559718810003687,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 72,
+      "npu_guided_s": 0.6517754899996362,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 73,
+      "npu_guided_s": 0.6503344320008182,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 74,
+      "npu_guided_s": 0.6511800669995864,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 75,
+      "npu_guided_s": 0.6518711420012551,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 76,
+      "npu_guided_s": 0.6549814290010545,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 77,
+      "npu_guided_s": 0.6609849220003525,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 78,
+      "npu_guided_s": 0.6510665500009054,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 79,
+      "npu_guided_s": 0.6494635979997838,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 80,
+      "npu_guided_s": 0.6503489759998047,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 81,
+      "npu_guided_s": 0.651187718998699,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 82,
+      "npu_guided_s": 0.6550354249993688,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 83,
+      "npu_guided_s": 0.6585498869990261,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 84,
+      "npu_guided_s": 0.6477942540004733,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 85,
+      "npu_guided_s": 0.6489021759989555,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607076 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 86,
+      "npu_guided_s": 0.6474286689990549,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607080 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 87,
+      "npu_guided_s": 0.6488171300006798,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607080 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 88,
+      "npu_guided_s": 0.6590145989994198,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607080 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 89,
+      "npu_guided_s": 0.6634292250000726,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607080 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 90,
+      "npu_guided_s": 0.6554757020003308,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 91,
+      "npu_guided_s": 0.6512724069998512,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 92,
+      "npu_guided_s": 0.6504400960002386,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 93,
+      "npu_guided_s": 0.6531522099994618,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 94,
+      "npu_guided_s": 0.6530222330002289,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 95,
+      "npu_guided_s": 0.6558496270008618,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 96,
+      "npu_guided_s": 0.6501814339990233,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 97,
+      "npu_guided_s": 0.6506768830004148,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 98,
+      "npu_guided_s": 0.6485804359999747,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 99,
+      "npu_guided_s": 0.6458733100007521,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    },
+    {
+      "iteration": 100,
+      "npu_guided_s": 0.6470173960005923,
+      "host_process_memory": {
+        "VmHWM": "4403224 kB",
+        "VmRSS": "2607084 kB"
+      },
+      "torch_allocated_bytes": 1215558656,
+      "torch_reserved_bytes": 2023751680
+    }
+  ],
+  "threads": 8,
+  "matched_steps": 20,
+  "source_decisions_differ": 1,
+  "max_target_abs_difference_per_dim": [
+    0.005133725702762604,
+    0.0020554065704345703,
+    0.023451507091522217,
+    0.00766715407371521,
+    0.00880211591720581,
+    0.011242121458053589,
+    0.0,
+    0.01204673945903778,
+    0.022221803665161133,
+    0.019626915454864502,
+    0.004649817943572998,
+    0.022589653730392456,
+    0.014331232756376266,
+    0.0
+  ],
+  "native": {
+    "rows": [
+      {
+        "source": "SAFE",
+        "detail": "rejected:soft:ACT_disagreement=0.173367; authority=0.00",
+        "authority": 0.0,
+        "filtered_step_rad": 0.012048482894897461,
+        "filtered_act_disagreement_rad": 0.17336702346801758,
+        "target": [
+          -0.10130345821380615,
+          1.4955596923828125,
+          -1.0054529905319214,
+          -0.2746986746788025,
+          0.5761842727661133,
+          0.24998506903648376,
+          0.00012478604912757874,
+          0.21169254183769226,
+          1.4867547750473022,
+          -0.9485092163085938,
+          0.17475472390651703,
+          0.4962332844734192,
+          -0.05057065933942795,
+          0.002245284616947174
+        ],
+        "act_gripper": [
+          0.00012478604912757874,
+          0.002245284616947174
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.14 disagree=0.0785",
+        "authority": 0.135,
+        "filtered_step_rad": 0.04109305143356323,
+        "filtered_act_disagreement_rad": 0.07846444845199585,
+        "target": [
+          -0.09311866760253906,
+          1.5123192071914673,
+          -1.0327167510986328,
+          -0.2708571255207062,
+          0.5944050550460815,
+          0.254016637802124,
+          0.00015744613483548164,
+          0.20856131613254547,
+          1.4861565828323364,
+          -0.9528566598892212,
+          0.17158415913581848,
+          0.5044582486152649,
+          -0.04775925725698471,
+          0.0026867808774113655
+        ],
+        "act_gripper": [
+          0.00015744613483548164,
+          0.0026867808774113655
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.25 disagree=0.0676",
+        "authority": 0.24975,
+        "filtered_step_rad": 0.05225515365600586,
+        "filtered_act_disagreement_rad": 0.06761741638183594,
+        "target": [
+          -0.09220897406339645,
+          1.5110914707183838,
+          -1.0363465547561646,
+          -0.2741768956184387,
+          0.5976603031158447,
+          0.25684496760368347,
+          0.0002521672286093235,
+          0.2062286138534546,
+          1.479569673538208,
+          -0.9553957581520081,
+          0.1676407903432846,
+          0.5120837092399597,
+          -0.04753381758928299,
+          0.0032155942171812057
+        ],
+        "act_gripper": [
+          0.0002521672286093235,
+          0.0032155942171812057
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.35 disagree=0.0726",
+        "authority": 0.34728749999999997,
+        "filtered_step_rad": 0.0545811653137207,
+        "filtered_act_disagreement_rad": 0.07258415222167969,
+        "target": [
+          -0.09401779621839523,
+          1.5145403146743774,
+          -1.0362218618392944,
+          -0.2785918712615967,
+          0.5938213467597961,
+          0.260699063539505,
+          0.0,
+          0.20239877700805664,
+          1.4686028957366943,
+          -0.9437534213066101,
+          0.1637967824935913,
+          0.5068594217300415,
+          -0.045076631009578705,
+          0.0034925779327750206
+        ],
+        "act_gripper": [
+          0.0,
+          0.0034925779327750206
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.43 disagree=0.0738",
+        "authority": 0.43019437499999996,
+        "filtered_step_rad": 0.0542294979095459,
+        "filtered_act_disagreement_rad": 0.07375013828277588,
+        "target": [
+          -0.09632348269224167,
+          1.5025266408920288,
+          -1.0316168069839478,
+          -0.28288212418556213,
+          0.5927470922470093,
+          0.26298418641090393,
+          0.0,
+          0.2027445286512375,
+          1.454390287399292,
+          -0.9309477806091309,
+          0.1576235592365265,
+          0.5065751075744629,
+          -0.039735786616802216,
+          0.0043700276874005795
+        ],
+        "act_gripper": [
+          0.0,
+          0.0043700276874005795
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.50 disagree=0.0846",
+        "authority": 0.50066521875,
+        "filtered_step_rad": 0.05275458097457886,
+        "filtered_act_disagreement_rad": 0.0846356749534607,
+        "target": [
+          -0.09903929382562637,
+          1.5000542402267456,
+          -1.0301079750061035,
+          -0.28708845376968384,
+          0.5891358852386475,
+          0.264941930770874,
+          0.0,
+          0.19909459352493286,
+          1.4455888271331787,
+          -0.9231003522872925,
+          0.1534893810749054,
+          0.5018813610076904,
+          -0.038235172629356384,
+          0.0044102598913013935
+        ],
+        "act_gripper": [
+          0.0,
+          0.0044102598913013935
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.56 disagree=0.0900",
+        "authority": 0.5605654359375001,
+        "filtered_step_rad": 0.052973031997680664,
+        "filtered_act_disagreement_rad": 0.08995568752288818,
+        "target": [
+          -0.10259436070919037,
+          1.4992576837539673,
+          -1.0258082151412964,
+          -0.29284432530403137,
+          0.585367739200592,
+          0.2682817280292511,
+          0.0,
+          0.2029295265674591,
+          1.4358962774276733,
+          -0.9122673869132996,
+          0.14713771641254425,
+          0.4992804229259491,
+          -0.03350483626127243,
+          0.004712000489234924
+        ],
+        "act_gripper": [
+          0.0,
+          0.004712000489234924
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.61 disagree=0.0948",
+        "authority": 0.611480620546875,
+        "filtered_step_rad": 0.049242496490478516,
+        "filtered_act_disagreement_rad": 0.0948035717010498,
+        "target": [
+          -0.10281690955162048,
+          1.4951971769332886,
+          -1.022030234336853,
+          -0.29520341753959656,
+          0.5860238075256348,
+          0.2685399055480957,
+          0.0,
+          0.20474347472190857,
+          1.4333375692367554,
+          -0.9106786847114563,
+          0.14528468251228333,
+          0.5012194514274597,
+          -0.03360600769519806,
+          0.005414704792201519
+        ],
+        "act_gripper": [
+          0.0,
+          0.005414704792201519
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.65 disagree=0.0922",
+        "authority": 0.6547585274648438,
+        "filtered_step_rad": 0.046207547187805176,
+        "filtered_act_disagreement_rad": 0.09219658374786377,
+        "target": [
+          -0.10251577943563461,
+          1.4858430624008179,
+          -1.014212727546692,
+          -0.30042749643325806,
+          0.5847384333610535,
+          0.26886996626853943,
+          0.0,
+          0.2038402408361435,
+          1.421221137046814,
+          -0.9023815393447876,
+          0.145474374294281,
+          0.5024176836013794,
+          -0.03327452391386032,
+          0.005240544676780701
+        ],
+        "act_gripper": [
+          0.0,
+          0.005240544676780701
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.69 disagree=0.1010",
+        "authority": 0.6915447483451171,
+        "filtered_step_rad": 0.0425034761428833,
+        "filtered_act_disagreement_rad": 0.10104489326477051,
+        "target": [
+          -0.10344316065311432,
+          1.4901472330093384,
+          -1.0108211040496826,
+          -0.3041599988937378,
+          0.5838878750801086,
+          0.2720463275909424,
+          0.0,
+          0.20533473789691925,
+          1.418520212173462,
+          -0.8959382772445679,
+          0.1404697746038437,
+          0.5010553598403931,
+          -0.030486363917589188,
+          0.006082290783524513
+        ],
+        "act_gripper": [
+          0.0,
+          0.006082290783524513
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.72 disagree=0.1029",
+        "authority": 0.7228130360933496,
+        "filtered_step_rad": 0.03746509552001953,
+        "filtered_act_disagreement_rad": 0.10291779041290283,
+        "target": [
+          -0.10487132519483566,
+          1.493605613708496,
+          -1.0082640647888184,
+          -0.3082902133464813,
+          0.5796619653701782,
+          0.2744103968143463,
+          0.0,
+          0.20467159152030945,
+          1.4144256114959717,
+          -0.8909338116645813,
+          0.1380576491355896,
+          0.49900028109550476,
+          -0.029441745951771736,
+          0.005924894008785486
+        ],
+        "act_gripper": [
+          0.0,
+          0.005924894008785486
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.75 disagree=0.1037",
+        "authority": 0.7493910806793471,
+        "filtered_step_rad": 0.03542220592498779,
+        "filtered_act_disagreement_rad": 0.10373735427856445,
+        "target": [
+          -0.10501440614461899,
+          1.4948889017105103,
+          -1.0041965246200562,
+          -0.31140631437301636,
+          0.5800665616989136,
+          0.2736130356788635,
+          0.0,
+          0.20785605907440186,
+          1.4195728302001953,
+          -0.8964741826057434,
+          0.1362430900335312,
+          0.5024405121803284,
+          -0.029476316645741463,
+          0.006193016190081835
+        ],
+        "act_gripper": [
+          0.0,
+          0.006193016190081835
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.77 disagree=0.0975",
+        "authority": 0.7719824185774451,
+        "filtered_step_rad": 0.03014814853668213,
+        "filtered_act_disagreement_rad": 0.09753847122192383,
+        "target": [
+          -0.10801325738430023,
+          1.491122841835022,
+          -0.9953957796096802,
+          -0.3183535039424896,
+          0.5796990394592285,
+          0.27739185094833374,
+          0.0,
+          0.20809917151927948,
+          1.4127599000930786,
+          -0.8905066251754761,
+          0.12884457409381866,
+          0.5029088258743286,
+          -0.024585681036114693,
+          0.0066405353136360645
+        ],
+        "act_gripper": [
+          0.0,
+          0.0066405353136360645
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.79 disagree=0.1138",
+        "authority": 0.7911850557908283,
+        "filtered_step_rad": 0.03300678730010986,
+        "filtered_act_disagreement_rad": 0.1137923002243042,
+        "target": [
+          -0.1068444699048996,
+          1.489821434020996,
+          -0.9958865642547607,
+          -0.32350897789001465,
+          0.582621157169342,
+          0.2813810706138611,
+          1.877080649137497e-05,
+          0.2077324539422989,
+          1.4102635383605957,
+          -0.8899816870689392,
+          0.12768492102622986,
+          0.5050618648529053,
+          -0.023001709952950478,
+          0.007164320442825556
+        ],
+        "act_gripper": [
+          1.877080649137497e-05,
+          0.007164320442825556
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.81 disagree=0.1111",
+        "authority": 0.8075072974222041,
+        "filtered_step_rad": 0.030766606330871582,
+        "filtered_act_disagreement_rad": 0.11113572120666504,
+        "target": [
+          -0.10806705802679062,
+          1.496509075164795,
+          -0.9938309788703918,
+          -0.32664912939071655,
+          0.5824618339538574,
+          0.28285396099090576,
+          4.948209971189499e-05,
+          0.21055959165096283,
+          1.41317617893219,
+          -0.8898187279701233,
+          0.12780940532684326,
+          0.5040042996406555,
+          -0.024624116718769073,
+          0.007377779111266136
+        ],
+        "act_gripper": [
+          4.948209971189499e-05,
+          0.007377779111266136
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.82 disagree=0.1344",
+        "authority": 0.8213812028088735,
+        "filtered_step_rad": 0.027470827102661133,
+        "filtered_act_disagreement_rad": 0.13441669940948486,
+        "target": [
+          -0.10959510505199432,
+          1.4936540126800537,
+          -0.9898629188537598,
+          -0.33120426535606384,
+          0.583806037902832,
+          0.2882121205329895,
+          0.0,
+          0.2105204164981842,
+          1.404808521270752,
+          -0.8892511129379272,
+          0.12444736808538437,
+          0.50539231300354,
+          -0.023109454661607742,
+          0.0071000163443386555
+        ],
+        "act_gripper": [
+          0.0,
+          0.0071000163443386555
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.83 disagree=0.1305",
+        "authority": 0.8331740223875425,
+        "filtered_step_rad": 0.022967100143432617,
+        "filtered_act_disagreement_rad": 0.1305387020111084,
+        "target": [
+          -0.10974672436714172,
+          1.493902564048767,
+          -0.9888870716094971,
+          -0.3363736569881439,
+          0.5842002630233765,
+          0.2948441207408905,
+          0.0,
+          0.21220846474170685,
+          1.4008644819259644,
+          -0.8860310912132263,
+          0.12479908019304276,
+          0.5026386976242065,
+          -0.023888833820819855,
+          0.006570762488991022
+        ],
+        "act_gripper": [
+          0.0,
+          0.006570762488991022
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.84 disagree=0.1280",
+        "authority": 0.8431979190294111,
+        "filtered_step_rad": 0.02411210536956787,
+        "filtered_act_disagreement_rad": 0.1279888153076172,
+        "target": [
+          -0.10856280475854874,
+          1.4913971424102783,
+          -0.9854342341423035,
+          -0.341538667678833,
+          0.587342381477356,
+          0.29996490478515625,
+          0.0,
+          0.21482764184474945,
+          1.4021811485290527,
+          -0.887480616569519,
+          0.12309769541025162,
+          0.5071738958358765,
+          -0.02358318120241165,
+          0.007274964824318886
+        ],
+        "act_gripper": [
+          0.0,
+          0.007274964824318886
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.85 disagree=0.1371",
+        "authority": 0.8517182311749995,
+        "filtered_step_rad": 0.02778029441833496,
+        "filtered_act_disagreement_rad": 0.13710904121398926,
+        "target": [
+          -0.11172930151224136,
+          1.4988930225372314,
+          -0.9849978089332581,
+          -0.34537941217422485,
+          0.5950701832771301,
+          0.30360105633735657,
+          0.0,
+          0.21523091197013855,
+          1.4036884307861328,
+          -0.8891324996948242,
+          0.12138348817825317,
+          0.5124454498291016,
+          -0.02217167243361473,
+          0.007455177139490843
+        ],
+        "act_gripper": [
+          0.0,
+          0.007455177139490843
+        ]
+      },
+      {
+        "source": "SAFE",
+        "detail": "rejected:soft:ACT_disagreement=0.163852; authority=0.72",
+        "authority": 0.7239604964987495,
+        "filtered_step_rad": 0.033269405364990234,
+        "filtered_act_disagreement_rad": 0.16385245323181152,
+        "target": [
+          -0.11363698542118073,
+          1.4812544584274292,
+          -0.9959321618080139,
+          -0.34465542435646057,
+          0.6035626530647278,
+          0.32038015127182007,
+          0.0,
+          0.20157906413078308,
+          1.3701295852661133,
+          -0.8594179153442383,
+          0.1178416758775711,
+          0.4897764325141907,
+          -0.00787605345249176,
+          0.007257911842316389
+        ],
+        "act_gripper": [
+          0.0,
+          0.007257911842316389
+        ]
+      }
+    ],
+    "stopped_at": null,
+    "error": null
+  },
+  "npu": {
+    "rows": [
+      {
+        "source": "SAFE",
+        "detail": "rejected:soft:ACT_disagreement=0.173634; authority=0.00",
+        "authority": 0.0,
+        "filtered_step_rad": 0.01253044605255127,
+        "filtered_act_disagreement_rad": 0.17363393306732178,
+        "target": [
+          -0.10130345821380615,
+          1.4955596923828125,
+          -1.0054529905319214,
+          -0.2746986746788025,
+          0.5761842727661133,
+          0.24998506903648376,
+          0.00012478604912757874,
+          0.21169254183769226,
+          1.4867547750473022,
+          -0.9485092163085938,
+          0.17475472390651703,
+          0.4962332844734192,
+          -0.05057065933942795,
+          0.002245284616947174
+        ],
+        "act_gripper": [
+          0.00012478604912757874,
+          0.002245284616947174
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.14 disagree=0.0787",
+        "authority": 0.135,
+        "filtered_step_rad": 0.04129272699356079,
+        "filtered_act_disagreement_rad": 0.07866412401199341,
+        "target": [
+          -0.09312386065721512,
+          1.5123225450515747,
+          -1.032705307006836,
+          -0.2708582580089569,
+          0.5944115519523621,
+          0.2540130615234375,
+          0.00015744613483548164,
+          0.20856499671936035,
+          1.4861814975738525,
+          -0.9528601169586182,
+          0.1715833693742752,
+          0.504462718963623,
+          -0.047763749957084656,
+          0.0026867808774113655
+        ],
+        "act_gripper": [
+          0.00015744613483548164,
+          0.0026867808774113655
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.25 disagree=0.0678",
+        "authority": 0.24975,
+        "filtered_step_rad": 0.05238807201385498,
+        "filtered_act_disagreement_rad": 0.06776177883148193,
+        "target": [
+          -0.09222415834665298,
+          1.5110799074172974,
+          -1.0363237857818604,
+          -0.2741766571998596,
+          0.5976729393005371,
+          0.25683557987213135,
+          0.0002521672286093235,
+          0.20623569190502167,
+          1.479604959487915,
+          -0.9554044604301453,
+          0.167637437582016,
+          0.5120851993560791,
+          -0.04754122719168663,
+          0.0032155942171812057
+        ],
+        "act_gripper": [
+          0.0002521672286093235,
+          0.0032155942171812057
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.35 disagree=0.0728",
+        "authority": 0.34728749999999997,
+        "filtered_step_rad": 0.05475354194641113,
+        "filtered_act_disagreement_rad": 0.07277929782867432,
+        "target": [
+          -0.09404010325670242,
+          1.5145564079284668,
+          -1.0361790657043457,
+          -0.2785922586917877,
+          0.5938420295715332,
+          0.2606818377971649,
+          0.0,
+          0.20241037011146545,
+          1.4686565399169922,
+          -0.9437795877456665,
+          0.16379372775554657,
+          0.5068663954734802,
+          -0.04509333521127701,
+          0.0034925779327750206
+        ],
+        "act_gripper": [
+          0.0,
+          0.0034925779327750206
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.43 disagree=0.0740",
+        "authority": 0.43019437499999996,
+        "filtered_step_rad": 0.054404377937316895,
+        "filtered_act_disagreement_rad": 0.0739678144454956,
+        "target": [
+          -0.09636464715003967,
+          1.5024930238723755,
+          -1.0315508842468262,
+          -0.28288495540618896,
+          0.592770516872406,
+          0.2629559636116028,
+          0.0,
+          0.2027696967124939,
+          1.4545053243637085,
+          -0.9309871196746826,
+          0.15760979056358337,
+          0.5066033005714417,
+          -0.0397685207426548,
+          0.0043700276874005795
+        ],
+        "act_gripper": [
+          0.0,
+          0.0043700276874005795
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.50 disagree=0.0849",
+        "authority": 0.50066521875,
+        "filtered_step_rad": 0.05297744274139404,
+        "filtered_act_disagreement_rad": 0.08492445945739746,
+        "target": [
+          -0.09909363836050034,
+          1.500023603439331,
+          -1.0300068855285645,
+          -0.28711050748825073,
+          0.5891620516777039,
+          0.26491788029670715,
+          0.0,
+          0.1991591602563858,
+          1.445763111114502,
+          -0.9231804609298706,
+          0.15347033739089966,
+          0.5019251704216003,
+          -0.038279078900814056,
+          0.0044102598913013935
+        ],
+        "act_gripper": [
+          0.0,
+          0.0044102598913013935
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.56 disagree=0.0903",
+        "authority": 0.5605654359375001,
+        "filtered_step_rad": 0.05320847034454346,
+        "filtered_act_disagreement_rad": 0.09029221534729004,
+        "target": [
+          -0.1026688739657402,
+          1.4992477893829346,
+          -1.0256673097610474,
+          -0.29287123680114746,
+          0.5853961706161499,
+          0.2682660222053528,
+          0.0,
+          0.2030518501996994,
+          1.4361730813980103,
+          -0.9123866558074951,
+          0.14711488783359528,
+          0.49934670329093933,
+          -0.0335836261510849,
+          0.004712000489234924
+        ],
+        "act_gripper": [
+          0.0,
+          0.004712000489234924
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.61 disagree=0.0950",
+        "authority": 0.611480620546875,
+        "filtered_step_rad": 0.04934096336364746,
+        "filtered_act_disagreement_rad": 0.09504294395446777,
+        "target": [
+          -0.10289474576711655,
+          1.495249629020691,
+          -1.0218839645385742,
+          -0.29521802067756653,
+          0.5860612988471985,
+          0.26853159070014954,
+          0.0,
+          0.2049303948879242,
+          1.433789849281311,
+          -0.9108971357345581,
+          0.1452600657939911,
+          0.5013473629951477,
+          -0.033736348152160645,
+          0.005414704792201519
+        ],
+        "act_gripper": [
+          0.0,
+          0.005414704792201519
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.65 disagree=0.0926",
+        "authority": 0.6547585274648438,
+        "filtered_step_rad": 0.04647010564804077,
+        "filtered_act_disagreement_rad": 0.09260541200637817,
+        "target": [
+          -0.10260862857103348,
+          1.4859377145767212,
+          -1.014014482498169,
+          -0.3004315495491028,
+          0.5847729444503784,
+          0.26887258887290955,
+          0.0,
+          0.2040780484676361,
+          1.4217650890350342,
+          -0.902623176574707,
+          0.14545473456382751,
+          0.5025821328163147,
+          -0.03345608338713646,
+          0.005240544676780701
+        ],
+        "act_gripper": [
+          0.0,
+          0.005240544676780701
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.69 disagree=0.1015",
+        "authority": 0.6915447483451171,
+        "filtered_step_rad": 0.04272961616516113,
+        "filtered_act_disagreement_rad": 0.10146927833557129,
+        "target": [
+          -0.10354911535978317,
+          1.4903440475463867,
+          -1.0105783939361572,
+          -0.3041859567165375,
+          0.5838782787322998,
+          0.2720745801925659,
+          0.0,
+          0.20562843978405,
+          1.4193532466888428,
+          -0.8963004946708679,
+          0.1404876857995987,
+          0.5012485980987549,
+          -0.03076842986047268,
+          0.006082290783524513
+        ],
+        "act_gripper": [
+          0.0,
+          0.006082290783524513
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.72 disagree=0.1033",
+        "authority": 0.7228130360933496,
+        "filtered_step_rad": 0.03762465715408325,
+        "filtered_act_disagreement_rad": 0.10332006216049194,
+        "target": [
+          -0.10503290593624115,
+          1.493936538696289,
+          -1.0079976320266724,
+          -0.30834898352622986,
+          0.5795907974243164,
+          0.27451521158218384,
+          0.0,
+          0.20504958927631378,
+          1.4155467748641968,
+          -0.8914227485656738,
+          0.13809418678283691,
+          0.49923038482666016,
+          -0.029811151325702667,
+          0.005924894008785486
+        ],
+        "act_gripper": [
+          0.0,
+          0.005924894008785486
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.75 disagree=0.1044",
+        "authority": 0.7493910806793471,
+        "filtered_step_rad": 0.03577268123626709,
+        "filtered_act_disagreement_rad": 0.10435426235198975,
+        "target": [
+          -0.10523596405982971,
+          1.4953030347824097,
+          -1.0038450956344604,
+          -0.31148406863212585,
+          0.5799201726913452,
+          0.27374446392059326,
+          0.0,
+          0.20832255482673645,
+          1.4209873676300049,
+          -0.8970698714256287,
+          0.13631412386894226,
+          0.5027363896369934,
+          -0.029934771358966827,
+          0.006193016190081835
+        ],
+        "act_gripper": [
+          0.0,
+          0.006193016190081835
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.77 disagree=0.1002",
+        "authority": 0.7719824185774451,
+        "filtered_step_rad": 0.03049546480178833,
+        "filtered_act_disagreement_rad": 0.10015523433685303,
+        "target": [
+          -0.10827746242284775,
+          1.4917032718658447,
+          -0.9949581027030945,
+          -0.3184860944747925,
+          0.5794881582260132,
+          0.2776094675064087,
+          0.0,
+          0.20864853262901306,
+          1.4144538640975952,
+          -0.8912360668182373,
+          0.12891505658626556,
+          0.5032655000686646,
+          -0.025120090693235397,
+          0.0066405353136360645
+        ],
+        "act_gripper": [
+          0.0,
+          0.0066405353136360645
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.79 disagree=0.1166",
+        "authority": 0.7911850557908283,
+        "filtered_step_rad": 0.03414320945739746,
+        "filtered_act_disagreement_rad": 0.1166226863861084,
+        "target": [
+          -0.10716503113508224,
+          1.4905657768249512,
+          -0.9954121112823486,
+          -0.32369667291641235,
+          0.5823880434036255,
+          0.2816516160964966,
+          1.877080649137497e-05,
+          0.2083682268857956,
+          1.41221022605896,
+          -0.8908230662345886,
+          0.12776358425617218,
+          0.5054625868797302,
+          -0.023599281907081604,
+          0.007164320442825556
+        ],
+        "act_gripper": [
+          1.877080649137497e-05,
+          0.007164320442825556
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.81 disagree=0.1143",
+        "authority": 0.8075072974222041,
+        "filtered_step_rad": 0.0319523811340332,
+        "filtered_act_disagreement_rad": 0.11426818370819092,
+        "target": [
+          -0.1084519624710083,
+          1.497374176979065,
+          -0.9932512044906616,
+          -0.3268814980983734,
+          0.5821788311004639,
+          0.2831641435623169,
+          4.948209971189499e-05,
+          0.21126633882522583,
+          1.4153895378112793,
+          -0.8907004594802856,
+          0.12787672877311707,
+          0.5044851303100586,
+          -0.02529478631913662,
+          0.007377779111266136
+        ],
+        "act_gripper": [
+          4.948209971189499e-05,
+          0.007377779111266136
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.82 disagree=0.1375",
+        "authority": 0.8213812028088735,
+        "filtered_step_rad": 0.028298139572143555,
+        "filtered_act_disagreement_rad": 0.13745737075805664,
+        "target": [
+          -0.11001531779766083,
+          1.494615077972412,
+          -0.9890891313552856,
+          -0.3315170109272003,
+          0.583467423915863,
+          0.2886454164981842,
+          0.0,
+          0.21133196353912354,
+          1.4071626663208008,
+          -0.8901737332344055,
+          0.12454263865947723,
+          0.5059814453125,
+          -0.02385215274989605,
+          0.0071000163443386555
+        ],
+        "act_gripper": [
+          0.0,
+          0.0071000163443386555
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.83 disagree=0.1341",
+        "authority": 0.8331740223875425,
+        "filtered_step_rad": 0.024152517318725586,
+        "filtered_act_disagreement_rad": 0.1340782642364502,
+        "target": [
+          -0.11021401733160019,
+          1.4949318170547485,
+          -0.9879412651062012,
+          -0.3367805480957031,
+          0.5838155150413513,
+          0.2954091429710388,
+          0.0,
+          0.21314622461795807,
+          1.4034820795059204,
+          -0.886978030204773,
+          0.12493118643760681,
+          0.5033457279205322,
+          -0.024726537987589836,
+          0.006570762488991022
+        ],
+        "act_gripper": [
+          0.0,
+          0.006570762488991022
+        ]
+      },
+      {
+        "source": "SmolVLA",
+        "detail": "authority=0.84 disagree=0.1317",
+        "authority": 0.8431979190294111,
+        "filtered_step_rad": 0.025160670280456543,
+        "filtered_act_disagreement_rad": 0.13165497779846191,
+        "target": [
+          -0.10911205410957336,
+          1.4925436973571777,
+          -0.9844319224357605,
+          -0.34200796484947205,
+          0.5869300961494446,
+          0.3005939722061157,
+          0.0,
+          0.21587638556957245,
+          1.405019760131836,
+          -0.8885254859924316,
+          0.12326476722955704,
+          0.5079894661903381,
+          -0.024493226781487465,
+          0.007274964824318886
+        ],
+        "act_gripper": [
+          0.0,
+          0.007274964824318886
+        ]
+      },
+      {
+        "source": "SAFE",
+        "detail": "rejected:soft:ACT_disagreement=0.140871; authority=0.72",
+        "authority": 0.7167182311749994,
+        "filtered_step_rad": 0.02870357036590576,
+        "filtered_act_disagreement_rad": 0.14087092876434326,
+        "target": [
+          -0.11686302721500397,
+          1.4968376159667969,
+          -1.0052597522735596,
+          -0.33771225810050964,
+          0.6038722991943359,
+          0.31484317779541016,
+          0.0,
+          0.20318417251110077,
+          1.384735345840454,
+          -0.8722019195556641,
+          0.11673367023468018,
+          0.4902108907699585,
+          -0.007840439677238464,
+          0.007455177139490843
+        ],
+        "act_gripper": [
+          0.0,
+          0.007455177139490843
+        ]
+      },
+      {
+        "source": "SAFE",
+        "detail": "rejected:soft:ACT_disagreement=0.151496; authority=0.61",
+        "authority": 0.6092104964987495,
+        "filtered_step_rad": 0.039865970611572266,
+        "filtered_act_disagreement_rad": 0.15149593353271484,
+        "target": [
+          -0.116932712495327,
+          1.479832410812378,
+          -1.0193836688995361,
+          -0.33963659405708313,
+          0.6093149781227112,
+          0.3276403248310089,
+          0.0,
+          0.19367003440856934,
+          1.3479077816009521,
+          -0.8397909998893738,
+          0.11480677127838135,
+          0.4671867787837982,
+          0.0015075011178851128,
+          0.007257911842316389
+        ],
+        "act_gripper": [
+          0.0,
+          0.007257911842316389
+        ]
+      }
+    ],
+    "stopped_at": null,
+    "error": null
+  }
+}

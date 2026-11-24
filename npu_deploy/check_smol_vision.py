@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 import onnxruntime as ort
+from npu_provider_options import provider_options, enable_execution_profile, confirm_execution
 
 
 def main():
@@ -27,14 +28,24 @@ def main():
         raise RuntimeError('VitisAIExecutionProvider is not installed')
     providers = ['VitisAIExecutionProvider', 'CPUExecutionProvider'] if args.provider == 'npu' else ['CPUExecutionProvider']
     options = ort.SessionOptions()
+    options.intra_op_num_threads = int(os.environ.get('AIPC_RUNTIME_THREADS', '8'))
+    options.inter_op_num_threads = 1
     options.log_severity_level = 1 if args.provider == 'npu' else 2
+    if args.provider == 'npu': enable_execution_profile(options)
     started = time.perf_counter()
-    session = ort.InferenceSession(str(args.artifact_dir/'smol_vision.onnx'), sess_options=options, providers=providers)
+    model = args.artifact_dir/'smol_vision.onnx'
+    cache_options = provider_options(model, ort.__version__) if args.provider == 'npu' else {}
+    session = ort.InferenceSession(str(model), sess_options=options, providers=providers,
+                                 provider_options=[cache_options, {}] if args.provider == 'npu' else [{}])
+    execution_proof = confirm_execution(session) if args.provider == 'npu' else None
     load_s = time.perf_counter() - started
     if args.provider == 'npu' and 'VitisAIExecutionProvider' not in session.get_providers():
         raise RuntimeError('Requested NPU provider was not registered')
+    metadata_path = args.artifact_dir/'fixture_metadata.json'
+    metadata = json.loads(metadata_path.read_text()) if metadata_path.is_file() else {'source_kind': 'UNSPECIFIED'}
+    print('FIXTURE_SOURCE=' + str(metadata.get('source_kind', 'UNSPECIFIED')), flush=True)
     fixture = np.load(args.artifact_dir/'fixture.npz', allow_pickle=False)
-    report = {'provider_requested': args.provider, 'providers_registered': session.get_providers(),
+    report = {'execution_proof': execution_proof, 'cache_options': cache_options, 'fixture_metadata': metadata, 'provider_requested': args.provider, 'providers_registered': session.get_providers(),
               'session_create_s': load_s, 'warmup': args.warmup, 'repeat': args.repeat,
               'onnxruntime': ort.__version__, 'images': [],
               'qualification': 'Offline single-fixture encoder comparison. Provider registration alone does not prove NPU execution; inspect compiler logs and complete action/controller validation.'}
@@ -42,6 +53,10 @@ def main():
     for i in range(3):
         pixels = np.asarray(fixture[f'image_{i}'], dtype=np.float32)
         reference = np.asarray(fixture[f'feature_{i}'], dtype=np.float32)
+        if pixels.shape != (1, 3, 512, 512) or reference.shape != (1, 64, 960):
+            raise RuntimeError(f'image {i}: invalid fixture shape')
+        if not np.isfinite(pixels).all() or not np.isfinite(reference).all():
+            raise RuntimeError(f'image {i}: non-finite fixture')
         timings = []
         for j in range(args.warmup + args.repeat):
             start = time.perf_counter()

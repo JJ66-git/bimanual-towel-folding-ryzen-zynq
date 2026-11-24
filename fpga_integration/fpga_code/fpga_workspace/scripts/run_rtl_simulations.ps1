@@ -8,12 +8,14 @@ $rtlDirectory = Join-Path (Split-Path $PSScriptRoot -Parent) 'rtl'
 $outputPath = [IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Path $outputPath -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $rtlDirectory 'vectors.txt') -Destination $outputPath
-$sources = @('motion_guard.sv', 'link_watchdog.sv', 'axi_lite_guard.sv',
-    'tb_motion_guard.sv', 'tb_link_watchdog.sv', 'tb_axi_lite_guard.sv',
+$sources = @('motion_guard.sv', 'link_watchdog.sv', 'fold_stage.sv', 'fold_vision.sv', 'axi_lite_guard.sv',
+    'tb_motion_guard.sv', 'tb_link_watchdog.sv', 'tb_axi_lite_guard.sv', 'tb_fold_stage.sv', 'tb_fold_vision.sv',
     'axi_lcd.sv', 'tb_axi_lcd.sv') |
     ForEach-Object { Join-Path $rtlDirectory $_ }
 $scenarios = @(
     @{ Top = 'tb_link_watchdog'; Pass = 'PASS: watchdog periodic session' },
+    @{ Top = 'tb_fold_stage'; Pass = 'PASS: fold phase boundaries' },
+    @{ Top = 'tb_fold_vision'; Pass = 'PASS: vision identity' },
     @{ Top = 'tb_axi_lite_guard'; Pass = 'PASS: AXI4-Lite register/core checks' },
     @{ Top = 'tb_motion_guard'; Pass = 'PASS 1678 motion guard vectors' },
     @{ Top = 'tb_axi_lcd'; Pass = 'PASS: LCD AXI, palette, color bars, 768000 pixels and two vblank flips' }

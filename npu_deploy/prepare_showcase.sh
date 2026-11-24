@@ -3,11 +3,27 @@
 set -euo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT="$ROOT/amd_hybrid_deploy_20261031"
-FPGA_ADDRESS="${AIPC_FPGA_SHADOW:-192.168.2.99:9009}"
+if [[ -f "$ROOT/npu_deploy/fpga_board_mode.sh" ]]; then source "$ROOT/npu_deploy/fpga_board_mode.sh"; fi
+FPGA_ADDRESS="${AIPC_FPGA_ADDRESS:-${AIPC_FPGA_SHADOW:-192.168.2.99:9009}}"
+if [[ "${1:-}" == --panel && $# == 1 ]]; then
+  PY="$ROOT/amd_hybrid_deploy_20261031/.venv/bin/python"
+  set +e
+  "$PY" "$ROOT/npu_deploy/showcase_panel.py" --workflow prepare
+  code=$?
+  set -e
+  if [[ "$code" != 78 ]]; then exit "$code"; fi
+  echo '启动面板不可用，继续使用原终端流程。' >&2
+  set --
+fi
+panel_event() {
+  if [[ -n "${AIPC_SHOWCASE_PANEL_TOKEN:-}" ]]; then
+    printf '\nFLEXIFOLD_PANEL:%s:%s:%s\n' "$AIPC_SHOWCASE_PANEL_TOKEN" "$1" "$2"
+  fi
+}
 if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
   echo '准备脚本：设置 750 步、识别相机与 CAN、监听机械臂反馈、检查 FPGA 网络和 NPU。'
-  echo '用法：bash npu_deploy/prepare_showcase.sh [--check-only]'
-  echo '各阶段按 Enter 继续、q 退出；不使能或移动机械臂，可能请求 sudo。FPGA 地址可用 AIPC_FPGA_SHADOW=IPv4:端口 指定。'
+  echo '用法：bash npu_deploy/prepare_showcase.sh [--check-only | --panel]'
+  echo '各阶段按 Enter 继续、q 退出；不使能或移动机械臂，可能请求 sudo。FPGA 地址可用 AIPC_FPGA_ADDRESS=IPv4:端口 指定。'
   exit 0
 fi
 if [[ "${1:-}" == --check-only && $# == 1 ]]; then
@@ -15,10 +31,17 @@ if [[ "${1:-}" == --check-only && $# == 1 ]]; then
   echo '不会访问硬件或修改配置。'; exit 0
 fi
 if (( $# )); then echo '未知参数；使用 --help。' >&2; exit 2; fi
+mkdir -p "$ROOT/npu_deploy/artifacts/showcase"
+LOCK_PATH="$ROOT/npu_deploy/artifacts/showcase/operation.lock"
+if [[ -f "$ROOT/npu_deploy/operation_lock_path.py" ]]; then LOCK_PATH="$(python3 "$ROOT/npu_deploy/operation_lock_path.py")"; fi
+mkdir -p "$(dirname -- "$LOCK_PATH")"
+exec 9>"$LOCK_PATH"
+if ! flock -n 9; then echo '任务或互动仍在运行，请先退出该流程。' >&2;exit 1;fi
 trap 'echo "准备已中断，未继续执行后续步骤。" >&2; exit 130' INT TERM
 
 wait_for_enter() {
   local reply
+  panel_event GATE "$2"
   while true; do
     printf '\n%s\n' "$1"
     printf '按 Enter 继续；输入 q 退出：'
@@ -35,7 +58,7 @@ wait_for_enter() {
 }
 
 echo '现场准备流程：预算与绑定 → 机械臂反馈 → FPGA 网络 → NPU 检查。'
-wait_for_enter '准备开始设备检查。'
+wait_for_enter '准备开始设备检查。' budget
 LIMIT="$(ulimit -l)"
 if [[ "$LIMIT" != unlimited && "$LIMIT" -lt 1048576 ]]; then
   echo '调整本脚本及子进程的 memlock 上限为 1 GiB（不是预分配）；系统可能要求 sudo 密码。'
@@ -44,13 +67,17 @@ fi
 mkdir -p "$ROOT/npu_deploy/artifacts/showcase"
 SESSION="$(mktemp -d "$ROOT/npu_deploy/artifacts/showcase/prepare_$(date +%Y%m%d_%H%M%S)_XXXXXX")"
 echo "准备日志目录：$SESSION"
+panel_event STAGE budget
 echo '[1/4] 设置现场 750 步，核对 FPGA 源码配置'
 python3 "$ROOT/npu_deploy/field_budget.py" --apply
-wait_for_enter '预算已核对，准备识别相机和两臂并监听反馈。'
+wait_for_enter '预算已核对，准备识别相机和两臂并监听反馈。' devices
+panel_event STAGE devices
 echo '[2/4] 识别两臂 USB-CAN、相机并监听反馈'
-"$PROJECT/run.sh" prepare 2>&1 | tee "$SESSION/prepare.log"
+echo '若出现 sudo 密码提示，请在界面底部的密码框输入本机密码并提交，或在启动终端输入；密码不回显。'
+bash "$PROJECT/run.sh" prepare 2>&1 | tee "$SESSION/prepare.log"
 python3 "$ROOT/npu_deploy/check_preparation_result.py" "$SESSION/prepare.log"
-wait_for_enter '相机身份与机械臂反馈检查完成，准备检查 FPGA 网络。'
+wait_for_enter '相机身份与机械臂反馈检查完成，准备检查 FPGA 网络。' network
+panel_event STAGE network
 echo '[3/4] 检查 FPGA 网络地址'
 FPGA_IP="${FPGA_ADDRESS%:*}"
 python3 - "$FPGA_ADDRESS" <<'PY'
@@ -69,12 +96,19 @@ fi
 SRC_IP="$(printf '%s\n' "$ROUTE" | awk '{for(i=1;i<=NF;i++) if($i=="src") {print $(i+1); exit}}')"
 echo 'FPGA IP 可达；运行服务和 PL 将在正式脚本中继续检查。'
 echo '启动 FPGA 显示和诊断服务，等待板端确认……'
-python3 "$ROOT/npu_deploy/fpga_lifecycle/control_client.py" start --host "$FPGA_IP"
+if [[ "${AIPC_FPGA_MODE:-b32}" == fpg1_v3 ]]; then
+  "$PROJECT/.venv/bin/python" "$ROOT/npu_deploy/fpga_board/control_jupyter.py" ensure
+else
+  python3 "$ROOT/npu_deploy/fpga_lifecycle/control_client.py" start --host "$FPGA_IP"
+fi
 if [[ -n "$SRC_IP" ]]; then
   echo "AI PC 有线地址：$SRC_IP；请确认与 FPGA 生命周期服务的允许地址一致。"
 fi
-wait_for_enter 'FPGA 网络检查完成，准备运行 NPU 视觉预检。'
-echo '[4/4] 独立 NPU 视觉预检（可能需要数分钟）'
-bash "$ROOT/npu_deploy/run_npu_preflight.sh"
+wait_for_enter 'FPGA 网络检查完成，准备运行 NPU 视觉预检。' npu
+panel_event STAGE npu
+echo '[4/4] NPU 视觉预检；有效结果可复用'
+if ! python3 "$ROOT/npu_deploy/npu_preflight_reuse.py"; then
+  bash "$ROOT/npu_deploy/run_npu_preflight.sh"
+fi
 echo 'PREPARATION_COMPLETE: 750 步、机械臂反馈、相机身份、FPGA 网络和 NPU 预检已完成。'
 echo 'FPGA 显示和诊断服务已启动；没有自动启动或使能机械臂。'

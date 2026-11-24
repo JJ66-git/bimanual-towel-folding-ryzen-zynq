@@ -1,5 +1,11 @@
 # Bimanual Towel Folding on Ryzen AI and Zynq
 
+## FlexiFold field update
+
+This update preserves the project layout and adds the current B35 board package, the field launcher, the towel-placement overlay and the confirmed retry hold. See the [deployment guide](docs/deployment_zh.md), [runtime asset inventory](docs/runtime_assets_zh.md) and [B35 instructions](docs/b35_board_zh.md).
+
+After cloning, place the separate `FlexiFold_Runtime_Assets` directory next to this repository and run `python3 tools/link_runtime_assets.py` from the repository root to verify and link the local models.
+
 [中文](readme_zh.md) | English
 
 We are building a desktop bimanual robot that observes a towel, generates actions, and physically grasps and folds it. Three RGB cameras and two AgileX Piper arms connect to an AMD Ryzen AI PC running a hybrid ACT–SmolVLA policy. In parallel, the host sends copies of actions and feedback over Ethernet to a Zynq-7020. FPGA fixed-point logic checks these samples and the board LCD displays diagnostic status.

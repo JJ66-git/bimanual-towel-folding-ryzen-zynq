@@ -11,6 +11,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT/'amd_hybrid_deploy_20261031'))
 for directory in (ROOT / 'fpga_integration/fpga_code/fpga_workspace', ROOT / 'fpga'):
     if (directory / 'host/shadow.py').is_file():
         sys.path.insert(0, str(directory))
@@ -38,6 +39,15 @@ class ReferenceTransport(UdpTransport):
 
 class FpgaShadow:
     def __init__(self, address, output, *, max_actions, handoff_step, timeout=0.3):
+        self._dashboard_channel = None
+        self._dashboard_run_id = None
+        try:
+            from shared_runtime.dashboard_telemetry import channel
+            self._dashboard_channel = channel()
+            self._dashboard_run_id = (getattr(self._dashboard_channel.control,'run_id',None)
+                                      if self._dashboard_channel is not None else None)
+        except Exception:
+            pass
         self.output = Path(output)
         self.output.mkdir(parents=True, exist_ok=False)
         self.profile = load_profile()
@@ -59,6 +69,11 @@ class FpgaShadow:
             watchdog='FPG1 does not feed FWD1 watchdog',
             scope='diagnostic shadow only; return never controls or authorizes robot')
         (self.output / 'metadata.json').write_text(json.dumps(self.metadata, indent=2)+'\n', encoding='utf-8')
+        try:
+            from shared_runtime.dashboard_telemetry import publish_link
+            publish_link(self.metadata, self.client.session, self._dashboard_channel, self._dashboard_run_id)
+        except Exception:
+            pass
         print('FPGA_SHADOW_START='+json.dumps(self.metadata), flush=True)
         if self.profile['max_actions'] != max_actions or self.profile['handoff_step'] != handoff_step:
             print('FPGA_SHADOW_NOTICE: FPGA profile schedule differs from controller; flags use FPGA profile.', flush=True)
@@ -75,6 +90,11 @@ class FpgaShadow:
             self._probe_event.set()
             print('FPGA_PL_PROBE='+json.dumps(record, allow_nan=False), flush=True)
             return
+        try:
+            from shared_runtime.dashboard_telemetry import publish_board
+            publish_board(record, self._dashboard_channel, self._dashboard_run_id)
+        except Exception:
+            pass
         with self._result_lock:
             self._result_counts['checked'] += 1
             first_task_reply = self._result_counts['checked'] == 1

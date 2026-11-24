@@ -9,6 +9,7 @@ from pathlib import Path
 
 import numpy as np
 import onnxruntime as ort
+from npu_provider_options import provider_options, enable_execution_profile, confirm_execution
 
 
 def receive(fd):
@@ -53,11 +54,15 @@ def main():
             raise RuntimeError(f'Provider unavailable: {providers}')
         options = ort.SessionOptions()
         options.log_severity_level = 1 if args.provider == 'npu' else 2
-        options.intra_op_num_threads = 4
+        options.intra_op_num_threads = int(os.environ.get('AIPC_RUNTIME_THREADS', '8'))
         options.inter_op_num_threads = 1
-        session = ort.InferenceSession(str(args.model), sess_options=options, providers=providers)
+        if args.provider == 'npu': enable_execution_profile(options)
+        cache_options = provider_options(args.model, ort.__version__) if args.provider == 'npu' else {}
+        session = ort.InferenceSession(str(args.model), sess_options=options, providers=providers,
+                                     provider_options=[cache_options, {}] if args.provider == 'npu' else [{}])
         if args.provider == 'npu' and 'VitisAIExecutionProvider' not in session.get_providers():
             raise RuntimeError('NPU provider is not registered')
+        if args.provider == 'npu': confirm_execution(session)
         send(output_fd, b'R')
         while True:
             data = receive(input_fd)

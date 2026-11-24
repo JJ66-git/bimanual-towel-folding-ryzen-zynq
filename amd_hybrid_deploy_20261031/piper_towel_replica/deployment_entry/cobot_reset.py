@@ -162,6 +162,25 @@ def driver_snapshot(robot):
     return result
 
 
+def joint_communication_fault(bus):
+    """Read cached 0x2A1 feedback; no query, enable or recovery command."""
+    info = bus.piper.GetArmStatus()
+    status = info.arm_status
+    if int(status.arm_status) == 5 or int(status.err_code) & 0x3F:
+        return dict(sdk_receipt_timestamp=info.time_stamp,
+                    arm_status=int(status.arm_status), error_code=hex(int(status.err_code)))
+    return None
+
+
+def require_joint_communication(robot):
+    import json
+    faults = {name: fault for name, bus in (("left", robot.left_bus), ("right", robot.right_bus))
+              if (fault := joint_communication_fault(bus)) is not None}
+    if faults:
+        raise RuntimeError("Piper internal joint communication fault; no automatic re-enable: "
+                           + json.dumps(faults))
+
+
 def enable_both_holding(robot, hold, timeout=8.0):
     """Official EnablePiper polling, with BOTH measured targets refreshed each iteration.
 
@@ -173,6 +192,7 @@ def enable_both_holding(robot, hold, timeout=8.0):
     while time.monotonic() < deadline:
         if stop_requested:
             raise KeyboardInterrupt
+        require_joint_communication(robot)
         left_ready = robot.left_bus.piper.EnablePiper()
         right_ready = robot.right_bus.piper.EnablePiper()
         send_pose(robot, hold)
@@ -186,6 +206,7 @@ def enable_both_holding(robot, hold, timeout=8.0):
 
 def send_pose(robot: PIPERDual, pose: np.ndarray) -> None:
     validate_pose(pose, "recovery command", allow_recovery=True)
+    require_joint_communication(robot)
     robot.left_bus.write(pose[:7].tolist())
     robot.right_bus.write(pose[7:].tolist())
 
@@ -200,7 +221,9 @@ def hold_measured_pose(robot):
         snapshot = driver_snapshot(robot)
         print("RESET_EXIT_DRIVER_FEEDBACK="+json.dumps(snapshot), flush=True)
         for name, bus, arm_pose in (("left", robot.left_bus, pose[:7]), ("right", robot.right_bus, pose[7:])):
-            if all(snapshot[name]["enabled"]):
+            if joint_communication_fault(bus) is not None:
+                print("WARNING: "+name+" internal joint communication fault; no holding target sent. Physically support the arm.", flush=True)
+            elif all(snapshot[name]["enabled"]):
                 bus.write(arm_pose.tolist())
                 print(name+": measured-pose target sent; physical holding is not independently verified.", flush=True)
             else:
@@ -221,6 +244,7 @@ def move_slowly(robot: PIPERDual, start: np.ndarray, target: np.ndarray, args: a
 
     while not stop_requested:
         measured = read_positions(robot)
+        require_joint_communication(robot)
         if not arm_is_enabled(robot.left_bus) or not arm_is_enabled(robot.right_bus):
             import json
             raise RuntimeError("Driver enable lost during reference reset; no automatic re-enable. "
@@ -268,6 +292,7 @@ def move_slowly(robot: PIPERDual, start: np.ndarray, target: np.ndarray, args: a
     deadline = time.monotonic() + args.settle_timeout
     while time.monotonic() < deadline and not stop_requested:
         measured = read_positions(robot)
+        require_joint_communication(robot)
         if not arm_is_enabled(robot.left_bus) or not arm_is_enabled(robot.right_bus):
             import json
             raise RuntimeError("Driver enable lost while settling; no automatic re-enable. "
@@ -298,6 +323,8 @@ def main() -> None:
 
     robot = None
     enabled = False
+    display = None
+    display_outcome = 'error'
     try:
         robot = PIPERDual(PIPERDualConfig(left_port=args.left_can, right_port=args.right_can, read_only=True, cameras={}))
         # We enable arms ourselves below and never command the zero pose, so
@@ -339,6 +366,9 @@ def main() -> None:
             print("Cancelled. Arms were not enabled or moved by this script.")
             raise SystemExit(2)
 
+        from reset_display import ResetDisplay
+        display = ResetDisplay.from_environment()
+
         # The operator may have supported/repositioned the disabled arm while answering MOVE.
         # Refresh the holding start now; the explicitly selected task target is unchanged.
         current = read_positions(robot)
@@ -359,7 +389,9 @@ def main() -> None:
         if stop_requested:
             raise KeyboardInterrupt
         print("RESET_EXECUTION_COMPLETE", flush=True)
+        display_outcome = 'ended'
     except KeyboardInterrupt:
+        display_outcome = 'stopped'
         print("Keyboard interrupt received; no following task will be started.")
         raise SystemExit(130)
     except Exception as error:
@@ -369,6 +401,7 @@ def main() -> None:
         if robot is not None and enabled:
             hold_measured_pose(robot)
             print("No disable/protection-reset command sent; use reported driver state, not this log, to judge enable. Physically support before power-off.")
+        if display is not None:display.close(display_outcome)
 
 
 if __name__ == "__main__":

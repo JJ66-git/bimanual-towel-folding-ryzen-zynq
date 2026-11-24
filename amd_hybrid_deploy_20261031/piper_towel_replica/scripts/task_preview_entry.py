@@ -13,6 +13,7 @@ import time
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT.parent))
 from shared_runtime.camera_preview import TaskCameraPreview
+from shared_runtime import dashboard_telemetry
 from real_run_recording import RunRecorder, Tee
 
 
@@ -22,7 +23,7 @@ def snapshot(directory, entry, arguments):
              ROOT/'deployment_assets/task_start.json', Path(__file__),
              ROOT/'scripts/real_run_recording.py', ROOT/'scripts/run_cobot.py',
              ROOT/'scripts/towel_quality.py',
-             ROOT.parent/'shared_runtime/camera_preview.py',
+             *ROOT.parent.joinpath('shared_runtime').glob('*.py'),
              ROOT.parent/'shared_runtime/environment.json']
     for flag in ('--act-model', '--smol-model'):
         if flag in arguments:
@@ -115,6 +116,7 @@ def main():
         except Exception as problem:recorder._increment('sample_errors',problem)
         return result
 
+    telemetry_token = dashboard_telemetry.install() if preview is not None else None
     try:
         if preview is not None:preview.start()  # GUI failure remains before robot construction.
         PIPERDual.connect=connected
@@ -127,6 +129,7 @@ def main():
         if not isinstance(problem,SystemExit) or problem.code not in (None,0):error=type(problem).__name__+': '+str(problem)
         raise
     finally:
+        if telemetry_token is not None:dashboard_telemetry.uninstall(telemetry_token)
         PIPERDual.connect=original_connect
         PIPERDual.get_observation=original_observe
         PIPERDual.send_action=original_send

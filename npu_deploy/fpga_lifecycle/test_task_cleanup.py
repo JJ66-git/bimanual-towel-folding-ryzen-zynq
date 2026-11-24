@@ -20,7 +20,7 @@ class CleanupTests(unittest.TestCase):
         self.env={**os.environ,'PATH':str(self.path)+':'+os.environ['PATH'],
                   'BASH_ENV':str(self.path/'bash_env'),'MOCK_READY':str(self.path/'ready'),
                   'MOCK_FINISH':str(self.path/'finish'),'AIPC_FPGA_SHADOW':'192.168.2.99:9009',
-                  'AIPC_FPGA_AUTO_OFF':'1'}
+                  'AIPC_FPGA_AUTO_OFF':'1','AIPC_FPGA_MODE':'b32'}
     def tearDown(self): self.tmp.cleanup()
     def test_failure_preserves_status_and_finishes(self):
         result=subprocess.run(['bash',str(SCRIPT)],env={**self.env,'MOCK_EXIT':'42'},capture_output=True,text=True)

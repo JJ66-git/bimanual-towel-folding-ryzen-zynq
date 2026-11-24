@@ -3,11 +3,29 @@ import math
 import struct
 import unittest
 import zlib
+from unittest.mock import MagicMock,patch
 
 from host import task_status as wire
 
 
 class TaskProtocolTests(unittest.TestCase):
+    def test_explicit_session_is_preserved_and_invalid_sessions_are_rejected(self):
+        with patch.object(wire.socket,'socket',return_value=MagicMock()):
+            client=wire.Client(('127.0.0.1',9009),session=123)
+            self.assertEqual(client.session,123);client.close()
+            for session in (0,-1,0xffffffff,True,'123'):
+                with self.assertRaises(ValueError):wire.Client(('127.0.0.1',9009),session=session)
+
+    def test_terminal_claims_require_the_real_current_task_session(self):
+        from board.fpg1_v3_server import matched_task_claim
+        for phase in ('ENDED','FAILED','STOPPED','COMPLETE'):
+            for origin in wire.ORIGINS:
+                values=dict(phase=phase,activity='IDLE',origin=origin)
+                self.assertTrue(matched_task_claim(42,values,(('127.0.0.1',1234),42)))
+                for owner in (None,(('127.0.0.1',1234),43)):
+                    with self.assertRaisesRegex(ValueError,'task_status_session_mismatch'):matched_task_claim(42,values,owner)
+        self.assertFalse(matched_task_claim(42,dict(phase='WAITING',activity='IDLE',origin='HOST'),None))
+
     def test_all_claims_preserve_packet_identity(self):
         for phase in wire.PHASES:
             for activity in wire.ACTIVITIES:

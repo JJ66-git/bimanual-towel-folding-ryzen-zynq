@@ -13,32 +13,33 @@ PAGE_STRIDE = 0x30000
 FRAME_BASE = 0x1000
 
 
-def encode_portrait(image):
+def encode_portrait(image, palette=PALETTE):
     if image.size != (480,800):
         raise ValueError('portrait image must be 480x800')
     native = image.convert('RGB').transpose(Image.ROTATE_90)
     colors = Image.new('P',(1,1))
-    colors.putpalette([v for color in PALETTE for v in color] * 16)
+    colors.putpalette([v for color in palette for v in color] * 16)
     indexed = native.quantize(palette=colors,dither=Image.NONE)
     indices = np.asarray(indexed,dtype=np.uint8).reshape(-1) & 15
     packed = indices[0::2] | (indices[1::2] << 4)
     return packed.tobytes()
 
 
-def decode_native(packed):
+def decode_native(packed, palette=PALETTE):
     if len(packed) != PAGE_BYTES:
         raise ValueError('incorrect frame byte count')
     data = np.frombuffer(packed,dtype=np.uint8)
     indices = np.empty(data.size*2,dtype=np.uint8)
     indices[0::2] = data & 15
     indices[1::2] = data >> 4
-    rgb = np.asarray(PALETTE,dtype=np.uint8)[indices].reshape(480,800,3)
+    rgb = np.asarray(palette,dtype=np.uint8)[indices].reshape(480,800,3)
     return Image.fromarray(rgb,'RGB')
 
 
 class Framebuffer:
-    def __init__(self, ip):
+    def __init__(self, ip, palette=PALETTE, initial_image=None):
         self.ip = ip
+        self.palette = palette
         if ip.read(0) != 0x4c434431:
             raise RuntimeError('LCD1 BUILD_ID mismatch')
         if ip.read(0x1c) != (480 << 16 | 800) or ip.read(0x28) != PAGE_BYTES:
@@ -54,20 +55,29 @@ class Framebuffer:
         status = ip.read(8)
         if status & 4:
             raise RuntimeError('LCD has an outstanding frame; keep one display owner')
-        for index,color in enumerate(PALETTE):
+        initialize=initial_image is not None and not status & 1
+        if initialize:ip.write(0x04,0)
+        for index,color in enumerate(self.palette):
             rgb = color[0] << 16 | color[1] << 8 | color[2]
             offset = 0x100+4*index
             if not status & 1:
                 ip.write(offset,rgb)
             if ip.read(offset) != rgb:
                 raise RuntimeError('LCD palette mismatch')
+        if initialize:
+            packed=encode_portrait(initial_image,self.palette)
+            words=np.frombuffer(packed,dtype='<u4')
+            for page in (0,1):
+                start=(FRAME_BASE+page*PAGE_STRIDE)//4
+                ip.mmio.array[start:start+len(words)]=words
         ip.write(0x04,1)
+        if initialize:self.present(initial_image)
 
-    def close(self):
-        self.ip.write(0x04,0)
+    def close(self,preserve=False):
+        if not preserve:self.ip.write(0x04,0)
 
     def present(self, image):
-        packed = encode_portrait(image)
+        packed = encode_portrait(image, self.palette)
         status = self.ip.read(8)
         if status & 4 or not status & 8:
             raise RuntimeError('LCD busy or disabled')

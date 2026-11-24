@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlexiFold · 评委互动</title><link rel="stylesheet" href="booth.css">
+</head>
+<body>
+<main>
+<header><a class="brand" href="/">FlexiFold<span>柔叠智控 / 现场互动</span></a><div class="connection" id="mode" role="status">正在连接本地服务</div><button id="fullscreen" class="quiet">全屏展示</button></header>
+<nav class="tabs" aria-label="演示与互动方式">
+<button data-tab="demo" aria-pressed="true" aria-controls="demo-panel">项目演示</button>
+<button data-tab="guard" aria-pressed="false" aria-controls="guard-panel">01　您来修好这条动作</button>
+<button data-tab="capture" aria-pressed="false" aria-controls="capture-panel">02　您来采一条 VLA 示范</button>
+</nav>
+<section id="demo-panel" class="panel">
+<div class="intro"><div><p class="eyebrow">从看见，到亲手参与</p><h1>让动作有据可查</h1><p>看一段实机折叠，再亲手调整一条动作，或留下您的第一抓。</p></div><span class="tag">实机历史录像 · 约 22 秒</span></div>
+<div class="demo-grid"><article class="card"><video id="clip" src="folding_clip.mp4" poster="folding_frame.png" controls playsinline preload="metadata" aria-label="实机历史折叠录像"></video><p class="caption">2026 年 10 月 30 日实机录像</p></article><div class="choices"><button data-open="guard"><span class="eyebrow">互动 01 / 约 1 分钟</span><strong>修好一条越界动作 →</strong><span>拖动一个关节，看检查结果与板上显示。</span></button><button data-open="capture"><span class="eyebrow">互动 02 / 约 1 分钟</span><strong>采一条自己的示范数据 →</strong><span>自己决定开始与结束，看看模型学习前的数据。</span></button><p class="sub">两种互动可独立体验，也可连续进行。</p></div></div>
+</section>
+<section id="guard-panel" class="panel" hidden>
+<div class="intro"><div><p class="eyebrow">互动 01 / 只需拖动一个滑块</p><h1>这条动作越界了，您来调回来</h1><p>把白色圆点拖回绿色区，检查结果自动更新。</p></div><button id="reset-guard" class="quiet" disabled>重新挑战</button></div>
+<ol class="steps"><li>① 看越界动作</li><li>② 拖回绿色区</li><li>③ 看检查结果</li></ol>
+<div class="interaction-grid"><article class="card joint-card"><div class="card-top"><span>右臂 J2 · 角度示意</span><span id="pose-label" class="tag">等待载入</span></div>
+<svg id="joint-scene" viewBox="0 0 600 350" role="img" aria-label="右臂第二关节目标角度与上限的示意图">
+<defs><pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#20334a" stroke-width=".7"/></pattern></defs>
+<rect width="600" height="350" fill="url(#grid)"/><path d="M80 295H525" stroke="#607289" stroke-width="2"/>
+<path id="joint-arc" fill="none" stroke="#4be1ba" stroke-opacity=".18" stroke-width="26"/>
+<path id="joint-limit" stroke="#ffb15c" stroke-width="2" stroke-dasharray="6 6"/>
+<path d="M180 295L255 230" stroke="#526b85" stroke-width="28" stroke-linecap="round"/>
+<path id="joint-arm" stroke="#4be1ba" stroke-width="24" stroke-linecap="round"/>
+<circle cx="255" cy="230" r="25" fill="#12243b" stroke="#c8d9ed" stroke-width="3"/>
+<text x="255" y="236" text-anchor="middle" fill="#ecf4ff" font-size="17">J2</text>
+<g id="joint-tip"><path d="M-18 -8V13H-8M18 -8V13H8" fill="none" stroke="#ecf4ff" stroke-width="5"/></g>
+<text x="350" y="32" fill="#9eb3c8" font-size="15">仅改变诊断目标角度</text>
+<text x="350" y="56" fill="#9eb3c8" font-size="15">拖动时姿态图同步变化</text>
+</svg>
+<div class="slider-box"><div class="angle-line"><label for="j2">拖动调整 J2</label><output id="angle-value" for="j2">— rad</output></div>
+<input id="j2" type="range" min="1750" max="2650" step="10" value="2650" disabled aria-describedby="angle-limit">
+<div class="scale"><span>1.750 rad</span><span id="angle-limit">绿色区 ≤ 2.540 rad</span><span>2.650 rad</span></div></div>
+</article><div class="result-stack"><article id="guard-result" class="card verdict" data-state="waiting" aria-live="polite"><span class="eyebrow" id="result-source">检查结果</span><div class="result-symbol" id="result-symbol">…</div><h2 id="verdict">等待载入</h2><p id="guard-detail">正在读取配置</p><p id="board-meta" class="sub"></p></article>
+<div class="comparison"><div><span>挑战开始</span><strong id="before-result">尚未检查</strong><small>2.650 rad · 人为注入越界</small></div><div><span>您的调整</span><strong id="after-result">等待调整</strong><small id="after-angle">拖动后自动检查</small></div></div>
+<details><summary>查看案例与诊断信息</summary><img src="folding_frame.png" alt="历史实机录像第120帧"><p class="sub">以历史控制第 201 步为底稿，只修改右臂 J2 目标。图示用于解释角度；检查通过表示未触发当前诊断规则。</p><pre id="diagnostic">—</pre><button id="original" class="quiet" disabled>检查真实原样本</button></details></div></div>
+</section>
+<section id="capture-panel" class="panel" hidden>
+<div class="intro"><div><p class="eyebrow">互动 02 / 体验 VLA 流程的第一步</p><h1>您来采一条示范数据</h1><p>点开始，自由示范；做完后点结束，自动保存到专用文件夹。</p></div><span id="capture-source" class="tag">等待主臂连接</span></div>
+<ol class="pipeline" aria-label="项目数据与控制流程"><li class="current">① 采集示范<small>您正在体验</small></li><li>② 整理与对齐<small>画面、指令、动作</small></li><li>③ 训练 / 微调<small>学习对应关系</small></li><li>④ AI PC 推理<small>根据场景生成动作</small></li><li>⑤ FPGA 检查<small>再交给执行与反馈</small></li></ol>
+<div class="interaction-grid"><article class="card capture-visual"><div class="card-top"><span id="visual-title">V 场景画面 + A 示范动作</span><span id="live-grip">夹爪 — mm</span></div>
+<div class="capture-vision"><div class="camera-box"><video id="capture-camera" muted autoplay playsinline hidden aria-label="本次采集的实时相机画面"></video><div id="camera-placeholder"><strong>V · 机器人看到什么</strong><p>接入相机后，一起保存现场画面。</p></div><button id="enable-camera" class="quiet">接入相机</button><span id="camera-state" class="camera-state">当前未采图像</span></div><div class="gripper-scene"><svg viewBox="0 0 500 220" role="img" aria-label="夹爪开度示意"><path d="M250 15V65" stroke="#7593ae" stroke-width="28"/><rect x="170" y="60" width="160" height="38" rx="8" fill="#29445e"/><path id="jaw-left" stroke="#4be1ba" stroke-width="14" stroke-linejoin="round" fill="none"/><path id="jaw-right" stroke="#4be1ba" stroke-width="14" stroke-linejoin="round" fill="none"/><path d="M150 199H350" stroke="#627d98" stroke-width="3" stroke-dasharray="6 6"/><text x="250" y="185" text-anchor="middle" fill="#a9bbce" font-size="16">夹爪开合</text></svg></div></div>
+<div id="joint-bars" class="joint-bars" aria-label="六个关节相对起点的角度变化"></div>
+<div class="plot-label"><span>夹爪开度 / mm</span><span class="amber">最大关节角变化 / °</span></div><canvas id="trace-plot" role="img" aria-label="夹爪开度和关节角变化随时间的曲线"></canvas><div class="scale"><span id="time-0">0 秒</span><span id="time-1">—</span><span id="time-2">—</span><span id="time-3">—</span></div>
+<div class="vla-fields"><div><strong>V · 场景图像</strong><span id="v-count">未接相机</span><small>告诉模型：眼前是什么</small></div><div><strong>L · 任务指令</strong><span>本条示范共用一句指令</span><small>告诉模型：要完成什么</small></div><div><strong>A · 示范动作</strong><span id="a-count">6 个关节 + 夹爪</span><small>提供学习目标：怎样做</small></div></div>
+</article><div class="result-stack"><article class="card capture-controls"><label for="task-instruction" class="task-label">L · 这次希望机器人做什么？</label><textarea id="task-instruction" rows="2" maxlength="500">抓住毛巾一角，合爪后轻抬。</textarea><p id="leader-state" class="sub" role="status">正在检查主臂</p><button id="record-grasp" class="primary big" disabled>开始采集</button><button id="stop-grasp" class="danger big" hidden>结束并保存</button><div class="record-clock"><span id="record-dot"></span><div id="capture-count" class="capture-count">0.0<span>秒 / 时长由您决定</span></div><span id="capture-live-count">0 笔动作 · 0 张图像</span></div><h2 id="capture-status" aria-live="polite">准备采集一条示范</h2><p id="capture-detail">先点开始，再示范动作；做完后点结束并保存。</p><div id="capture-summary" class="summary" hidden></div><div id="capture-folder" class="saved-folder" hidden><strong>已保存到专用文件夹</strong><code id="saved-path"></code></div><div id="recorded-actions" class="action-row" hidden><button id="play-trace">回放我的动作</button><a id="save-trace" class="button" download="flexifold_episode.json">下载数据副本</a></div><button id="rehearse" class="quiet">无主臂？切换示例排练</button></article>
+<details id="data-purpose"><summary>这条数据在整个项目里有什么用？</summary><p>相机画面提供视觉输入 V，任务文字提供语言输入 L，示范动作 A 提供学习目标。把同一时刻的内容整理对应，模型才能学习“看到这样的场景、收到这样的任务，接下来怎样动作”。</p><p>示范先保存为原始采集素材，后续筛选、检查质量、补齐机器人实际状态与所需视角，再转换格式，用于训练或微调。部署时由 AI PC 推理生成动作，再送到 FPGA 检查，并结合执行反馈持续观测。</p><p class="sub">本页动作来自右主臂指令。相机画面使用服务器接收时间做近邻对应，尚未做硬件曝光同步；完整训练数据还需从臂实际反馈等信息。本次采集不会直接更新正在演示的模型。</p></details>
+<details><summary>查看专用文件夹里的采集记录</summary><p id="data-root" class="sub"></p><div id="episode-list" class="episode-list">尚无记录</div></details>
+<details><summary>看首抓画面与历史实机回放</summary><button id="mark-grasp" class="point-target" aria-label="点选抓点，方向键移动，Enter确认"><img src="grasp_before.jpg" alt="首抓前毛巾与夹爪"><span id="grasp-pin" hidden></span></button><p id="point-status" class="sub">点一个您想夹的位置。</p><button id="play-grasp">看历史三路回放</button><video id="grasp-video" src="grasp_three_views.webm" controls muted playsinline preload="none" hidden></video><p class="sub">历史实机录像，与本次示范分别记录。</p></details></div></div>
+</section>
+<footer><span>FlexiFold / 人机协作体验</span><span id="footer-note">本地预演 · 正在读取配置</span></footer>
+</main><script src="interaction.js"></script>
+</body></html>

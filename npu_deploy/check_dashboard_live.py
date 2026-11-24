@@ -43,7 +43,7 @@ def main():
     from shared_runtime.camera_preview import TaskCameraPreview
     cameras={role:OpenCVCameraConfig(index_or_path=site['camera_indices'][role],width=640,height=480,fps=30)
              for role in ('left','middle','right')}
-    preview=TaskCameraPreview(title='双臂与相机 · 只读检查')
+    preview=TaskCameraPreview(mode='READ ONLY',title='双臂与相机 · 只读检查')
     robot=None
     count=0
     try:

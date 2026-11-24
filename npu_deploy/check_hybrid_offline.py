@@ -49,12 +49,13 @@ def controller_args():
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--steps', type=int, default=20)
-    p.add_argument('--threads', type=int, default=4)
+    p.add_argument('--threads', type=int, default=int(os.environ.get('AIPC_RUNTIME_THREADS', '8')))
+    p.add_argument('--repeat', type=int, default=1, help='Repeat NPU-guided inference for a device-free stability check')
     p.add_argument('--out', type=Path, default=ROOT/'npu_deploy/artifacts/smol_vision/hybrid_offline.json')
     p.add_argument('--fixture', type=Path, default=B/'fixtures/observation.json')
     a = p.parse_args()
-    if not 1 <= a.steps <= 50 or a.threads < 1:
-        p.error('steps must be 1–50 and threads must be positive')
+    if not 1 <= a.steps <= 50 or a.threads < 1 or not 1 <= a.repeat <= 200:
+        p.error('steps must be 1–50, threads positive, repeat 1–200')
     torch.set_num_threads(a.threads)
     args = controller_args()
     motion = load_motion_profile(args.motion_profile, core)
@@ -148,7 +149,21 @@ def main():
         smol.init_rtc_processor()
         _, native, native_s = infer(smol, smol_pre, smol_post, prefix)
         vision.embed_image = npu_embed
-        _, npu, npu_s = infer(smol, smol_pre, smol_post, prefix)
+        stability=[]
+        for iteration in range(a.repeat):
+            _, npu, npu_s = infer(smol, smol_pre, smol_post, prefix)
+            trial=replay(act_chunk,npu)
+            if trial['error']:
+                raise RuntimeError('Repeated NPU replay failed: '+trial['error'])
+            memory={line.split(':',1)[0]:line.split(':',1)[1].strip()
+                    for line in Path('/proc/self/status').read_text().splitlines()
+                    if line.startswith(('VmRSS:','VmHWM:'))}
+            row={'iteration':iteration+1,'npu_guided_s':npu_s,'host_process_memory':memory}
+            if device.type=='cuda':
+                row['torch_allocated_bytes']=torch.cuda.memory_allocated()
+                row['torch_reserved_bytes']=torch.cuda.memory_reserved()
+            stability.append(row)
+            print('STABILITY_ITERATION='+json.dumps(row),flush=True)
         native_replay, npu_replay = replay(act_chunk, native), replay(act_chunk, npu)
         count = min(len(native_replay['rows']), len(npu_replay['rows']))
         target_delta = None
@@ -163,12 +178,15 @@ def main():
                   'npu_loader': 'hybrid_entry.NpuSmolLoader', 'steps_requested': a.steps,
                   'act_inference_s': act_s, 'npu_startup_s': startup_s,
                   'native_guided_s': native_s, 'npu_guided_s': npu_s,
+                  'resource_cpu_quota': os.environ.get('AIPC_RUNTIME_CPU_QUOTA'),
+                  'resource_memory_max': os.environ.get('AIPC_RUNTIME_MEMORY_MAX'),
+                  'stability_repeats': a.repeat, 'stability': stability, 'threads': a.threads,
                   'matched_steps': count, 'source_decisions_differ': decisions_differ,
                   'max_target_abs_difference_per_dim': target_delta,
                   'native': native_replay, 'npu': npu_replay}
         a.out.parent.mkdir(parents=True, exist_ok=True)
         a.out.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
-        print('HYBRID_OFFLINE=' + json.dumps({k: v for k, v in report.items() if k not in ('native', 'npu')}), flush=True)
+        print('HYBRID_OFFLINE=' + json.dumps({k: v for k, v in report.items() if k not in ('native', 'npu', 'stability')}), flush=True)
         print(f"NATIVE_REPLAY=steps:{len(native_replay['rows'])} error:{native_replay['error']}", flush=True)
         print(f"NPU_REPLAY=steps:{len(npu_replay['rows'])} error:{npu_replay['error']}", flush=True)
         print('HYBRID_REPORT=' + str(a.out), flush=True)

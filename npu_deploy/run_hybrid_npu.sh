@@ -2,6 +2,7 @@
 # Experimental mixed ROCm/NPU entry; defaults to the original read-only mode.
 set -eo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/npu_deploy/runtime_resources.sh"
 CHECK_ONLY=0
 for arg in "$@"; do
   if [[ "$arg" == --check-only ]]; then CHECK_ONLY=1; fi

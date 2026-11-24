@@ -12,6 +12,8 @@ PROJECT = BUNDLE/'piper_towel_replica'
 
 
 def main():
+    if os.environ.get('AIPC_FPGA_FOLD') and os.environ.get('AIPC_FPGA_SHADOW'):
+        raise RuntimeError('FPG1 v3 and B32 observer variables cannot be enabled together')
     env = os.environ.copy()
     env.update(PYTHONPATH=':'.join(str(p) for p in [PROJECT/'runtime_source/src', PROJECT/'deployment_entry',
                PROJECT/'upstream/act_reference/src', BUNDLE/'shared_runtime']),

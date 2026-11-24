@@ -74,7 +74,7 @@ def _send_hold(robot, pose):
     robot.right_bus.write(pose[7:])
 
 
-def connect_holding_measured(robot, *, stop_requested=lambda: False, timeout=8.0):
+def connect_holding_measured(robot, *, stop_requested=lambda: False, timeout=8.0, before_enable=None):
     """Connect reference cameras passively, then enable while holding measured pose.
 
     PIPERDual's active connect calls bus.connect(), which sends GripperCtrl(0).
@@ -95,6 +95,7 @@ def connect_holding_measured(robot, *, stop_requested=lambda: False, timeout=8.0
         if not read_only:
             deadline = time.monotonic() + timeout
             pose = _measured_pose(robot, deadline, stop_requested)
+            if before_enable is not None:before_enable(pose)
             report['hold_target'] = pose
             print('POLICY_CONNECTION_HOLD='+json.dumps(pose), flush=True)
             # Preload BOTH measured targets, then refresh BOTH on every poll.

@@ -1,0 +1,19 @@
+{
+  "mode": "fpg1_v3",
+  "address": "192.168.2.99:9009",
+  "expected_build_id": "0x46504735",
+  "management": "authenticated_jupyter",
+  "board_root": "/home/xilinx/jupyter_notebooks/fpga_fpg1_v3_b35_20261113",
+  "fclk_hz": 50000000,
+  "ps_reference_hz": 33333333,
+  "quality_profile": null,
+  "vision_mode": "phase_only_until_calibrated",
+  "field_ready": false,
+  "known_rtl_limitations": [],
+  "phase_config": {
+    "canonical_bytes": 1270,
+    "crc32": 1701428268,
+    "sha256": "f3c948cd21b52e40421c1e56b9ea078e91731034e9ab347c708dffb10ac45169"
+  },
+  "ui_revision": "cooperative_ui_20261113_1"
+}

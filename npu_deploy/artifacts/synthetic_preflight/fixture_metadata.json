@@ -1,0 +1,10 @@
+{
+  "source_kind": "SYNTHETIC",
+  "reference_backend": "native SmolVLA PyTorch CPU float32 embed_image; independent of ONNX",
+  "weights_sha256": "6e2ee82cb80090681aee42395cc96282d6e2b6d27e182b0f3c704c8d78b39afe",
+  "config_sha256": "c754679c97471d1cfc177e111f0c3e38c2694db18a8cd3bac9e41b61311d28d7",
+  "image_contract_sha256": "0105135d950a0b6306c0445b4b672d31784ed3c4693612f14b428598808b8261",
+  "fixture_sha256": "101b0a9ea1854ebc55201678e6a7b97fc50033887606dc96d77f6504d06df371",
+  "torch": "2.11.0+rocm7.14.1",
+  "qualification": "Generated gradient/color images and saved mean state; no field capture, accuracy or fold-success evidence."
+}

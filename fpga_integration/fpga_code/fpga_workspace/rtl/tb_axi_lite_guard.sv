@@ -1,3 +1,4 @@
+`include "fold_verify_params.svh"
 `timescale 1ns/1ps
 module tb_axi_lite_guard;
     logic clk=0, rst_n=0;
@@ -122,10 +123,98 @@ module tb_axi_lite_guard;
 
     integer poll;
     reg [31:0] status_value, watchdog_count_value, watchdog_gap_value;
+    reg signed [447:0] sample_vector;
+
+    task automatic submit_fold_sample(input [31:0] n, input [31:0] elapsed,
+                                      input integer pose);
+        reg [31:0] status;
+        integer i;
+        integer grip, left_l2, left_l3, right_l2, right_l3;
+        begin
+            grip=pose==0 ? 40000 : 0;
+            left_l2=pose==2 ? 1700000 : (pose==3 ? 500000 : 2913);
+            right_l2=pose==2 ? 1700000 : (pose==3 ? 500000 : 2582);
+            left_l3=pose==2 ? -900000 : (pose==3 ? -400000 : 6193);
+            right_l3=pose==2 ? -900000 : (pose==3 ? -400000 : 5739);
+            sample_vector='0;
+            sample_vector[0*32 +:32]=21962;
+            sample_vector[1*32 +:32]=left_l2;
+            sample_vector[2*32 +:32]=left_l3;
+            sample_vector[3*32 +:32]=-158985;
+            sample_vector[4*32 +:32]=59100;
+            sample_vector[5*32 +:32]=135610;
+            sample_vector[6*32 +:32]=grip;
+            sample_vector[7*32 +:32]=-40453;
+            sample_vector[8*32 +:32]=right_l2;
+            sample_vector[9*32 +:32]=right_l3;
+            sample_vector[10*32 +:32]=10187;
+            sample_vector[11*32 +:32]=117154;
+            sample_vector[12*32 +:32]=-91755;
+            sample_vector[13*32 +:32]=grip;
+            send_write(16'h0010,32'h8f4c7f55,4'hf,0,2'b00);
+            send_write(16'h0014,n,4'hf,0,2'b00);
+            send_write(16'h0018,32'h00000004,4'hf,0,2'b00);
+            send_write(16'h001c,32'd1000,4'hf,0,2'b00);
+            send_write(16'h0020,32'hffffffff,4'hf,0,2'b00);
+            send_write(16'h0084,elapsed,4'hf,0,2'b00);
+            send_write(16'h0088,32'd3,4'hf,0,2'b00);
+            send_write(16'h00d4,32'd42,4'hf,0,2'b00);
+            send_write(16'h00d8,n,4'hf,0,2'b00);
+            for (i=0;i<14;i=i+1) begin
+                send_write(16'h0100+i*4,sample_vector[i*32 +:32],4'hf,0,2'b00);
+                send_write(16'h0140+i*4,sample_vector[i*32 +:32],4'hf,0,2'b00);
+                send_write(16'h0180+i*4,sample_vector[i*32 +:32],4'hf,0,2'b00);
+                send_write(16'h01c0+i*4,sample_vector[i*32 +:32],4'hf,0,2'b00);
+            end
+            for (i=0;i<14;i=i+1) begin
+                send_write(16'h0200+i*4,32'd0,4'hf,0,2'b00);
+                send_write(16'h0240+i*4,32'd0,4'hf,0,2'b00);
+            end
+            send_write(16'h0004,32'd1,4'hf,0,2'b00);
+            poll=0; status=0;
+            while (poll<40 && status[1:0] != 2'b10) begin
+                read_register(16'h0008,status);
+                poll=poll+1;
+            end
+            if (status[1:0] != 2'b10) $fatal(1,"Fold AXI sample completion timeout");
+        end
+    endtask
+
+    task automatic submit_visual_feature(input [31:0] id, input [63:0] ready_us);
+        reg [31:0] status;
+        integer timeout;
+        begin
+            send_write(16'h00a0,32'd42,4'hf,0,2'b00);
+            send_write(16'h00a4,32'd12,4'hf,0,2'b00);
+            send_write(16'h00a8,id,4'hf,0,2'b00);
+            send_write(16'h00ac,32'd620000,4'hf,0,2'b00);
+            send_write(16'h00b0,32'd0,4'hf,0,2'b00);
+            send_write(16'h00b4,ready_us[31:0],4'hf,0,2'b00);
+            send_write(16'h00b8,ready_us[63:32],4'hf,0,2'b00);
+            send_write(16'h00bc,32'h1f4010cc,4'hf,0,2'b00);
+            send_write(16'h00c0,32'h00f00140,4'hf,0,2'b00);
+            send_write(16'h00c4,32'h000103e8,4'hf,0,2'b00);
+            send_write(16'h00c8,32'd1,4'hf,0,2'b00);
+            timeout=0; status=0;
+            while (timeout<40 && !(status[1] && !status[0])) begin
+                read_register(16'h0008,status);
+                timeout=timeout+1;
+            end
+            if (timeout>=40) $fatal(1,"FVE1 AXI feature completion timeout");
+            read_register(16'h0008,status);
+            if (!status[1]) $fatal(1,"FVE1 AXI result was not latched");
+            read_register(16'h00cc,status);
+            if (!status[31] || status[23:16] != id || status[15:8] != (id==3 ? 0 : 5))
+                $fatal(1,"B35 FVE1 snapshot layout mismatch: %h",status);
+        end
+    endtask
     initial begin
         repeat(3) @(negedge clk);
         rst_n=1;
-        read_word(12'h000,2'b00,32'h46504732);
+        read_word(12'h000,2'b00,32'h46504735);
+        read_word(16'h0098,2'b00,`FV_PHASE_CONFIG_CRC);
+        send_write(16'h0098,32'd0,4'hf,0,2'b10);
+        read_word(16'h0098,2'b00,`FV_PHASE_CONFIG_CRC);
 
         send_write(16'h1010,32'hdeadbeef,4'hf,0,2'b10);
         read_word(16'h1000,2'b10,32'h00000000);
@@ -164,6 +253,27 @@ module tb_axi_lite_guard;
         read_word(12'h040,2'b00,32'h00000005);
         read_word(12'h044,2'b00,32'h00000008);
         read_word(12'h048,2'b00,32'h00000003);
+
+        send_write(16'h008c,32'd1,4'hf,0,2'b00);
+        submit_fold_sample(1,0,0);
+        submit_fold_sample(2,50000,0);
+        submit_fold_sample(3,100000,0);
+        submit_fold_sample(4,150000,1);
+        submit_fold_sample(5,200000,1);
+        submit_fold_sample(6,250000,1);
+        submit_fold_sample(7,300000,2);
+        submit_fold_sample(8,360000,2);
+        submit_fold_sample(9,420000,2);
+        submit_fold_sample(10,470000,3);
+        submit_fold_sample(11,530000,3);
+        submit_fold_sample(12,610000,3);
+        read_word(16'h0090,2'b00,32'h00000103);
+        read_word(16'h00dc,2'b00,32'd12);
+        submit_visual_feature(1,650000);
+        submit_visual_feature(2,740000);
+        submit_visual_feature(3,840000);
+        read_word(16'h00e0,2'b00,32'h00030002);
+        read_word(16'h00cc,2'b00,32'h80030002);
 
         send_write(16'h004c,32'h00000001,4'hf,0,2'b00);
         read_word(16'h004c,2'b00,32'h00000001);

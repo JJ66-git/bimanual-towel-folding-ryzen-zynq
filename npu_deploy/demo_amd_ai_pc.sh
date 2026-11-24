@@ -2,9 +2,10 @@
 # Guided, live device and inference demonstration; no robot or FPGA access.
 set -eo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/npu_deploy/runtime_resources.sh"
 PROJECT="$ROOT/amd_hybrid_deploy_20261031"
 ART="$ROOT/npu_deploy/artifacts/smol_vision"
-DEMO_MEMORY_MAX="${AMD_DEMO_MEMORY_MAX:-16G}"
+DEMO_MEMORY_MAX="${AMD_DEMO_MEMORY_MAX:-$AIPC_RUNTIME_MEMORY_MAX}"
 if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
   printf '%s\n' '交互式演示：AMD CPU、AMD-SMI、ROCm GPU 真实计算、XRT NPU 自检、SmolVLA 视觉模型 NPU 推理。' \
     '用法：bash npu_deploy/demo_amd_ai_pc.sh' \
@@ -84,10 +85,10 @@ show_command python3 "$ROOT/npu_deploy/demo_verify_artifacts.py"
 python3 "$ROOT/npu_deploy/demo_verify_artifacts.py"
 ln -s "$ART/smol_vision.onnx" "$SESSION/smol_vision.onnx"
 ln -s "$ART/fixture.npz" "$SESSION/fixture.npz"
-echo "以下命令将启动 NPU 推理，scope 内存上限 $DEMO_MEMORY_MAX、CPU 配额 4 核、swap 为 0。"
+echo "以下命令将启动 NPU 推理，scope 内存上限 $DEMO_MEMORY_MAX、CPU 配额 $AIPC_RUNTIME_CPU_QUOTA、swap 为 0。"
 echo '设备驱动共享内存未必全部计入；首次编译可能需要几分钟。'
 NPU_CMD=(systemd-run --user --scope --collect --quiet \
-  "--property=MemoryMax=$DEMO_MEMORY_MAX" --property=MemorySwapMax=0 --property=CPUQuota=400% \
+  "--property=MemoryMax=$DEMO_MEMORY_MAX" --property=MemorySwapMax=0 "--property=CPUQuota=$AIPC_RUNTIME_CPU_QUOTA" \
   env -u LD_PRELOAD -u LD_LIBRARY_PATH -u PYTHONPATH -u PYTHONHOME -u GLIBC_TUNABLES \
   OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 \
   bash "$ROOT/npu_deploy/demo_npu_job.sh" "$SESSION")

@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 import logging
 from contextlib import nullcontext
 from copy import copy
@@ -66,6 +67,7 @@ class SyncInferenceEngine(InferenceEngine):
         task: str,
         device: str | None,
         robot_type: str,
+        queued_action_ready: Callable[[], bool] | None = None,
     ) -> None:
         super().__init__(task=task)
         self._policy = policy
@@ -75,6 +77,7 @@ class SyncInferenceEngine(InferenceEngine):
         self._ordered_action_keys = ordered_action_keys
         self._device = torch.device(device or "cpu")
         self._robot_type = robot_type
+        self._queued_action_ready = queued_action_ready
         logger.info(
             "SyncInferenceEngine initialized (device=%s, action_keys=%d)",
             self._device,
@@ -119,8 +122,13 @@ class SyncInferenceEngine(InferenceEngine):
                 # than ``policy.reset``: observation history and other episode state stay.
                 logger.info("Task changed to '%s' — dropping precomputed actions", task)
                 self._policy.drop_queued_actions()
-            observation = prepare_observation_for_inference(observation, self._device, task, self._robot_type)
-            observation = self._preprocessor(observation)
+            # The caller may opt in for a policy whose queued absolute actions
+            # and processors do not use observations until the next refill.
+            if self._queued_action_ready is not None and self._queued_action_ready():
+                observation = {}
+            else:
+                observation = prepare_observation_for_inference(observation, self._device, task, self._robot_type)
+                observation = self._preprocessor(observation)
             action = self._policy.select_action(observation)
             action = self._postprocessor(action)
         action_tensor = action.squeeze(0).cpu()
